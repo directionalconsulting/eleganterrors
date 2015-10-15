@@ -1,0 +1,70 @@
+RewriteEngine On
+RewriteBase /
+
+# Redirect to domain without www.
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule .* http://%1%{REQUEST_URI} [R=301,L]
+
+# Same for HTTPS:
+#RewriteCond %{HTTPS} on
+#RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+#RewriteRule .* https://%1%{REQUEST_URI} [R=301,L]
+
+# Custom error pages.
+ErrorDocument 404 /404.shtml
+ErrorDocument 403 /403.shtml
+ErrorDocument 500 /500.shtml
+
+# Prevent viewing of htaccess file.
+<Files .htaccess>
+    order allow,deny
+    deny from all
+</Files>
+
+# Default Directory Index
+DirectoryIndex index.php index.shtml index.html
+
+# Prevent directory listings
+Options All -Indexes -Multiviews +FollowSymLinks
+
+# Specify search friendly URLs
+RewriteRule ^about-music-for-the-masses$ /aboutmftm.shtml [L]
+RewriteRule ^vinyl-album-accessories$ /albumaccessories.shtml [L]
+RewriteRule ^cd-accessories$ /cdaccessories.shtml [L]
+RewriteRule ^turntables-and-accessories$ /dance.shtml [L]
+RewriteRule ^memorabilia$ /memorabilia.shtml [L]
+RewriteRule ^sales-policy$ /sales_policy.shtml [L]
+RewriteRule ^shipping-returns$ /ship_return.shtml [L]
+RewriteRule ^thank-you$ /forms/form.php [L]
+RewriteRule ^contact-us$ /forms/form.php [L]
+RewriteRule ^health/check$ /health/check.html [L]
+
+# Compress text, html, javascript, css, xml:
+AddOutputFilterByType DEFLATE text/plain
+AddOutputFilterByType DEFLATE text/html
+AddOutputFilterByType DEFLATE text/xml
+AddOutputFilterByType DEFLATE text/css
+AddOutputFilterByType DEFLATE application/xml
+AddOutputFilterByType DEFLATE application/xhtml+xml
+AddOutputFilterByType DEFLATE application/rss+xml
+AddOutputFilterByType DEFLATE application/javascript
+AddOutputFilterByType DEFLATE application/x-javascript
+
+<IfModule mod_php5.c>
+    php_flag session.auto_start on
+    php_flag expose_php off
+    php_value memory_limit 8M
+    php_value post_max_size 256K
+    php_value upload_max_size 256K
+    php_flag file_uploads off
+    php_flag html_errors off
+    php_flag display_errors off
+    php_flag log_errors on
+    php_value error_log php_errors.log
+    php_flag ignore_repeated_errors on
+    php_flag ignore_repeated_source on
+    php_value date.timezone "America/Los_Angeles"
+    php_value error_reporting "E_ALL & ~E_DEPRECATED & ~E_NOTICE"
+#    php_value error_reporting "E_ALL"
+</IfModule>

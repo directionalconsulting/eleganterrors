@@ -1,0 +1,26 @@
+#errordiv {
+    border: 1px solid red;
+    background-color: #FFAFAF;
+    display: none;
+    width: 50%;
+    margin: 5px;
+}
+
+.required {
+    background-color: #CC4444;
+    margin-left: 13px;
+    display: inline;
+    margin-top: 7px;
+}
+
+.required:focus {
+    background-color: #fff;
+    border: 1px solid #f00;
+}
+
+.checkit {
+    background-color: #E0E5EF;
+    margin-left: 13px;
+    display: inline;
+    margin-top: 7px;
+}
