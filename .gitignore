@@ -9,6 +9,8 @@
 /vendor/
 /bin/
 /composer.phar
+/phing.phar
+composer.lock
 .idea
 .DS_Store
 .settings
