@@ -25,7 +25,7 @@ Copy the required directives from **/.htaccess** file into your .htaccess file.
 
 Features TBD, got my notes, now just need time...
 
-+ Background Images - *multiple folders with random per page load using one or all folders with config setting*
++ Background Images - *multiple folders with random per page load using one or all folders*
 + Auth - *remote authentication for changing config setting options*
 + Service Codes - *service codes for operator modes similar to 411, 511, 611, 811, 911, etc...*
   
