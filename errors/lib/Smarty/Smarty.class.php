@@ -1084,14 +1084,14 @@ class Smarty
     }
 
     /**
-     * trigger Smarty error
+     * trigger Smarty errors
      *
      * @param string $error_msg
      * @param integer $error_type
      */
     function trigger_error($error_msg, $error_type = E_USER_WARNING)
     {
-        trigger_error("Smarty error: $error_msg", $error_type);
+        trigger_error("Smarty errors: $error_msg", $error_type);
     }
 
 
@@ -1795,7 +1795,7 @@ class Smarty
     }
 
     /**
-     * trigger Smarty plugin error
+     * trigger Smarty plugin errors
      *
      * @param string $error_msg
      * @param string $tpl_file

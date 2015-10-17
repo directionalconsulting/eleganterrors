@@ -44,7 +44,7 @@ function smarty_core_read_cache_file(&$params, &$smarty)
     }
 
     if (empty($params['results'])) {
-        // nothing to parse (error?), regenerate cache
+        // nothing to parse (errors?), regenerate cache
         return false;
     }
 

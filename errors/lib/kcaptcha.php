@@ -20,7 +20,7 @@ class KCAPTCHA{
     // generates keystring and image
     function KCAPTCHA(){
 
-        require('kcaptcha_config.php');
+        require( 'kcaptcha_config.php' );
         $fonts=array();
         $fontsdir_absolute=dirname(__FILE__).$fontsdir;
         if ($handle = opendir($fontsdir_absolute)) {

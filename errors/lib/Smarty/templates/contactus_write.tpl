@@ -12,7 +12,7 @@
             <input type="hidden" name="redirect" value="/thank-you">
             <input type="hidden" name="ar_from" value="info@{$base}">
             <input type="hidden" name="ar_subject" value="Thank you for your interest">
-            <input type="hidden" name="ar_file" value="/forms/assets/autoresponder.txt">
+            <input type="hidden" name="ar_file" value="/errors/assets/autoresponder.txt">
             <fieldset>
                 <legend></legend>
                 <label><span class="field">First Name</span></label>
@@ -33,17 +33,17 @@
             <fieldset>
                 <legend></legend>
                 <label id="quit">
-                    <input type="image" tabindex="6"  name="cancel" id="cancel" src="/forms/assets/error.png">
+                    <input type="image" tabindex="6"  name="cancel" id="cancel" src="/errors/assets/img/error.png">
                 </label>
                 <label id="key">
                     Enter Verification Code
-                    <img src="/forms/includes/secureword.php?{php}echo session_name(){/php}={php} echo session_id(){/php}"
+                    <img src="/errors/lib/secureword.php?{php}echo session_name(){/php}={php} echo session_id(){/php}"
                          alt="Enter text shown to contact {$sitename}"
                          title="Enter text shown to contact {$sitename}" class="veriword">
                     <input type="text" tabindex="4" name="keystring" id="keycode" title="Verification Code">
                 </label>
                 <label id="send">
-                    <input type="image" tabindex="5" name="submit" id="submit" src="/forms/assets/send.png">
+                    <input type="image" tabindex="5" name="submit" id="submit" src="/errors/assets/img/send.png">
                 </label>
             </fieldset>
             </form>

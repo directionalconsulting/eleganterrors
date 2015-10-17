@@ -39,7 +39,7 @@ class Smarty_Compiler extends Smarty {
      */
     var $_folded_blocks         =   array();    // keeps folded template blocks
     var $_current_file          =   null;       // the current template being compiled
-    var $_current_line_no       =   1;          // line number for error messages
+    var $_current_line_no       =   1;          // line number for errors messages
     var $_capture_stack         =   array();    // keeps track of nested capture buffers
     var $_plugin_info           =   array();    // keeps track of plugins to load
     var $_init_smarty_vars      =   false;
@@ -390,7 +390,7 @@ class Smarty_Compiler extends Smarty {
                                                               array($compiled_content, &$this));
                     $this->_plugins['postfilter'][$filter_name][3] = true;
                 } else {
-                    $this->_trigger_fatal_error("Smarty plugin error: postfilter '$filter_name' is not implemented");
+                    $this->_trigger_fatal_error("Smarty plugin errors: postfilter '$filter_name' is not implemented");
                 }
             }
         }
@@ -2205,7 +2205,7 @@ class Smarty_Compiler extends Smarty {
     }
 
     /**
-     * display Smarty syntax error
+     * display Smarty syntax errors
      *
      * @param string $error_msg
      * @param integer $error_type
@@ -2214,7 +2214,7 @@ class Smarty_Compiler extends Smarty {
      */
     function _syntax_error($error_msg, $error_type = E_USER_ERROR, $file=null, $line=null)
     {
-        $this->_trigger_fatal_error("syntax error: $error_msg", $this->_current_file, $this->_current_line_no, $file, $line, $error_type);
+        $this->_trigger_fatal_error("syntax errors: $error_msg", $this->_current_file, $this->_current_line_no, $file, $line, $error_type);
     }
 
 
@@ -2263,7 +2263,7 @@ class Smarty_Compiler extends Smarty {
 
     /**
      * pop closing tag-name
-     * raise an error if this stack-top doesn't match with the closing tag
+     * raise an errors if this stack-top doesn't match with the closing tag
      * @param string the closing tag's name
      * @return string the opening tag's name
      */

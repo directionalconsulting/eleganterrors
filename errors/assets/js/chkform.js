@@ -356,8 +356,8 @@ dispErr = function(error, divo) {
  isMatch = string;        // must match string
  optional = true;         // element will not be validated
 
- alerttype = 0            // no error msg
- alerttype = 1            // error msg in div
- alerttype = 2            // error msg in alert
- alerttype = 3            // error msg in div and alert
+ alerttype = 0            // no errors msg
+ alerttype = 1            // errors msg in div
+ alerttype = 2            // errors msg in alert
+ alerttype = 3            // errors msg in div and alert
  */

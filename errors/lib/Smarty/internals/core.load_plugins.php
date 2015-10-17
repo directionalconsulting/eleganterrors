@@ -62,7 +62,7 @@ function smarty_core_load_plugins($params, &$smarty)
 
         /*
          * If plugin file is found, it -must- provide the properly named
-         * plugin function. In case it doesn't, simply output the error and
+         * plugin function. In case it doesn't, simply output the errors and
          * do not fall back on any other method.
          */
         if ($_found) {
@@ -84,7 +84,7 @@ function smarty_core_load_plugins($params, &$smarty)
         }
 
         /*
-         * Plugin specific processing and error checking.
+         * Plugin specific processing and errors checking.
          */
         if (!$_found) {
             if ($_type == 'modifier') {
@@ -114,7 +114,7 @@ function smarty_core_load_plugins($params, &$smarty)
         if ($_found) {
             $smarty->_plugins[$_type][$_name] = array($_plugin_func, $_tpl_file, $_tpl_line, true, true);
         } else {
-            // output error
+            // output errors
             $smarty->_trigger_fatal_error('[plugin] ' . $_message, $_tpl_file, $_tpl_line, __FILE__, __LINE__);
         }
     }

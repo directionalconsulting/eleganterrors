@@ -38,7 +38,7 @@
  * 2005-06-13 html title attribute added, alt+ title removed if html is added (MG)
  * 2004-11-28 New "html"-paramter to use additional HTML-attributes (CE)
  * 2004-11-28 New "dynamic"-paramter recreates images without waste files (CE)
- * 2004-11-26 Some Change in structure, better documentation, better error-handling (CE)
+ * 2004-11-26 Some Change in structure, better documentation, better errors-handling (CE)
  * 2004-11-25 Support for prehtml and posthtml (CE)
  * -------------------------------------------------------------
  */

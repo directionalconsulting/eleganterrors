@@ -9,22 +9,20 @@
  * @note Collected files from WayBackMachine & .git + starting work now as recorded using wakatime
  * @example Begin work with proper tools and APIs @ 2015-09-18 13:46:30
  */
-ini_set('display_errors','on');
-ini_set('html_errors','on');
-ini_set('error_reporting','E_ALL');
-
+$debug = 'On';
+require_once('lib/debug.inc.php');
 
 // Define Globals
 define ('_TLDDOMAIN', $_SERVER['HTTP_HOST']);
 define ('_DEBUG', false);
 define ('_ROOT', dirname(__DIR__));
 define ('_BASE', basename(__DIR__));
-define ('SMARTY_DIR', _ROOT."/"._BASE."/Smarty/");
-define ('_SITENAME', 'Music for the Masses');
-define ('_INCLUDES',"includes/");
+define ('SMARTY_DIR', _ROOT."/"._BASE."/lib/Smarty/");
+define ('_SITENAME', 'Elegant Errors');
+define ('_INCLUDES',"lib/");
 
 // Grab requirements for API
-require_once(_INCLUDES.'stopwatch.php');
+require_once( _INCLUDES . 'stopwatch.php' );
 
 // Time it just to make sure it's not being abused or hanging
 $stopwatch = new stopwatch;
@@ -60,7 +58,7 @@ if ($success == 1) {
     // @TODO - Convert this to boilerplate .tpl & .htm for consistency and security - 2015-09-18 18:22:21
     // @TODO - Priority lowered - provided captcha works with session keys, with can just clean it up as is for now
     // @TODO ---> going to say yes, but first let's test as if I hadn't, then I think it's easy - 2015-09-18 18:41:41
-    include_once(_INCLUDES . 'formmail.php');
+    include_once( _INCLUDES . 'formmail.php' );
     exit(0);
 
 } else {
@@ -106,7 +104,7 @@ function ShowEmail($keywords, $displaytitle, $base, $tryagain, $success) {
     $file3 = stripslashes(urldecode($file3));
     $message = stripslashes(urldecode($message));
     */
-    require_once (SMARTY_DIR."smarty.inc.php");
+    require_once( SMARTY_DIR . "smarty.inc.php" );
     $smarty->assign('displaytitle', $displaytitle);
     $smarty->assign('folder', $folder);
     $smarty->assign('timestamp', $timestamp);

@@ -25,7 +25,7 @@ function smarty_function_rss_feed ($params, &$smarty) {
         }
 
         if (empty($params['type'])) {
-          die("rss export error: missing either 'type' parameter");
+          die("rss export errors: missing either 'type' parameter");
           return;
         }
 require_once (BASE.'includes'.SLASH.'rss_generator.inc.php');
@@ -69,7 +69,7 @@ while (!$rs->EOF) {
 
 } else {
 
-return false;  //  actually need a serious error dump here since sites database is empty
+return false;  //  actually need a serious errors dump here since sites database is empty
 
 }
 

@@ -69,7 +69,7 @@ function smarty_function_html_options($params, &$smarty)
     }
 
     if (!isset($options) && !isset($values))
-        return ''; /* raise error here? */
+        return ''; /* raise errors here? */
 
     $_html_result = '';
 

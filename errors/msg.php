@@ -4,12 +4,21 @@
  * @author Gordon Hackett - Directional-Consulting
  * @date 2015-10-02 15:03:17
  * @version 0.2.2
+ * @revised 2015-10-16 19:58:14
+ * @timestamp 1445050720084
  * @package ErrorDocuments - Error Message with passed in code value and message / images template redesign
- */
+ **/
 
-ini_set('display_errors','on');
-ini_set('html_errors','on');
-ini_set('error_reporting','E_ALL');
+require_once('lib/debug.inc.php');
+
+// Define Globals
+define ('_TLDDOMAIN', $_SERVER['HTTP_HOST']);
+define ('_DEBUG', false);
+define ('_ROOT', dirname(__DIR__));
+define ('_BASE', basename(__DIR__));
+define ('SMARTY_DIR', _ROOT."/"._BASE."/lib/Smarty/");
+define ('_SITENAME', 'Elegant Errors');
+define ('_INCLUDES',"lib/");
 
 /**
  * Class ErrorDocument
@@ -18,11 +27,10 @@ ini_set('error_reporting','E_ALL');
  */
 class ErrorDocument {
 
-
-
 	/**
-	 *  @var int HTTP Status Code
+	 * @int HTTP Status Code XXX
 	 * @see https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+	 *
 	 */
 	public $code = null;
 
@@ -32,14 +40,24 @@ class ErrorDocument {
 	public $url = null;
 
 	/**
-	 * @var int
+	 * @int Timeout in seconds for redirect when using 3xx codes
 	 */
-	public $timeout = 9;
+	public $timeout = 5;
 
 	/**
-	 * @var object Contains the Response, Reason, Image and Retry for given status code
+	 * @object Contains the Response, Reason, Image and Retry for given status code
 	 */
 	public $status;
+
+	/**
+	 * @boolean yaml_ext - true / false (bool)
+	 */
+	public $yaml_ext;
+
+	/**
+	 * @boolean yaml_pecl - true / false (bool)
+	 */
+	public $yaml_pecl;
 
 	/**
 	 * @var string URL to developer's website
@@ -62,26 +80,46 @@ class ErrorDocument {
 	 */
 	private $data = array();
 
+	public $stopwatch = null;
+
+	public $keywords, $displaytitle = null;
+
+	public $time, $base, $remoteip, $useragent, $referrer, $redirect, $script, $request = null;
+
+	public $tryagain, $success = false;
+
 	/**
 	 * Construct for class automatically instantiated when a new class instance is created, done one-shot!
 	 */
 	function __construct() {
 
+		// Grab requirements for API
+		require_once( _INCLUDES . 'stopwatch.php' );
+
+		// Time it just to make sure it's not being abused or hanging
+		$this->stopwatch = new stopwatch;
+
+		// Parse config.yaml and preload all status codes, etc...
 		$this->load_config();
 
-		// checks msg.php?c=XXX for numerical status code of 1 to 3 digits
+		// Checks msg.php?c=XXX for numerical status code of 1 to 3 digits
 		if (isset($_GET['c']) && preg_match('%\d{1,3}%',$_GET['c'])) {
 			$this->code = sprintf('%03d',$_GET['c']);
 		}
 
-		// checks msg.php?c=xxxurl=www.example.com for 3xx and redirect
+		// Checks msg.php?c=xxxurl=www.example.com for 3xx and redirect
 		if (isset($_GET['url']) && preg_match('%3\d{2,}%',$this->code)) {
 			$this->url = $_GET['url'];
 		}
 
+		// Set the XXX code, response, image and reason for the found $this->code
 		$this->set_status();
 
+		// Send the HTTP 1.1/XXX Response
 		$this->send_headers();
+
+		// @TODO - write render_error function and update Smarty libs...
+//		$this->render_error();
 
 	} // end __construct()
 
@@ -110,8 +148,17 @@ class ErrorDocument {
 	 */
 	protected function load_config() {
 		// @TODO - Add yaml.so check or PECL YAML local file path include function before next lines of code...
+		// return $data as array from lib/config.yaml
 		$yaml = file_get_contents('lib/config.yaml');
-		$this->data = yaml_parse($yaml,0); // return $data as array from lib/config.yaml
+		if ( extension_loaded ( 'yaml' )) {
+			// use YAML extension from PHP ini as detected above
+			$this->yaml_found = true;
+		} else {
+			// load YAML PECL from lib locally
+			require_once('');
+			$this->yaml_found = false;
+		};
+		$this->data = yaml_parse( $yaml, 0 );
 	}
 
 	/**
@@ -143,9 +190,89 @@ class ErrorDocument {
 			}
 		} // @TODO --> else send 407 somewhere with proper HTTP/1.1: 407 Response, but where/how... ???
 	}
+
+	// @TODO - Convert all template.inc.php's to template.tpl's Smarty && update library API's...
+
+	/**
+	 * @return rendered template view
+	 * $keywords, $displaytitle, $base, $tryagain, $success
+	 **/
+	public function render_form() {
+
+		require_once( SMARTY_DIR . "smarty.inc.php" );
+		/**
+		 * @package formmail && Smarty
+		 *
+		 * Example of how to set-up static variables embedded into the lib/formmail.php library
+		 *
+		 * Step 1. extract($_POST) - if it's present and save state for form reloads...
+		 *
+		 * Step 2. Decode & Sanititize the variables to prevent injection... @TODO - Improve upon this from previous work I've done ;)
+		 *
+		 * // Some built in variables in the formmail package...
+		 *
+		 * $email = stripslashes(urldecode($email));
+		 * $first = stripslashes(urldecode($first));
+		 * $last = stripslashes(urldecode($last));
+		 * $address = stripslashes(urldecode($address));
+		 * $city = stripslashes(urldecode($city));
+		 * $state = stripslashes(urldecode($state));
+		 * $file = stripslashes(urldecode($file));
+		 * $file2 = stripslashes(urldecode($file2));
+		 * $file3 = stripslashes(urldecode($file3));
+		 * $message = stripslashes(urldecode($message));
+		 *
+		 * Step 3. Load Smarty Vars, Cache Options, & Filters -> Render View
+		 **/
+
+		if (isset($_SERVER['REMOTE_ADDR']))
+		{
+			$this->remoteip = $_SERVER["REMOTE_ADDR"];
+		}
+
+		// Record the time it was reported to make log inspection easier...
+		$timestamp = strftime("%m-%d-%y_%H-%M",strtotime("now")) ;
+
+		// Save the form if we have some $_POST[] Array data, else fill the necessary basic blank fields...
+		if (isset($_POST) and !empty($_POST)) {
+			$DATA = $_POST;
+		} else {
+			$DATA = array(
+				'first' => '',
+				'last' => '',
+				'email' => '',
+				'message' => ''
+			);
+		}
+
+		$smarty->assign('displaytitle', $this->displaytitle);
+		$smarty->assign('timestamp', $timestamp);
+		$smarty->assign('keywords',$this->keywords);
+		$smarty->assign('time', $time);
+		$smarty->assign('base', $this->base);
+		$smarty->assign('tryagain', $this->tryagain);
+		$smarty->assign('success', $this->success);
+		$smarty->assign('sitename', _SITENAME);
+		$smarty->assign('elapsed', $this->stopwatch->get_elapsed());
+
+		$smarty->assign('subject', __SUBJECT." - ".$this->code." ".$this->status->response);
+		foreach ($DATA as $key => $value) {
+			$smarty->assign($key, stripslashes(urldecode($value)));
+		}
+		$smarty->display('contactus_index.tpl');
+		return true;
+	}
+
+	/*
+	// @TODO - Very similar function to above -#@$!~~~ (^_^) ~~~!$@#-
+	protected function render_view() {
+	}
+	*/
 }
 
 $errDoc = new ErrorDocument();
+// @TODO --> REPLACE Begin the document with render_error and render_form plus update Smarty API -> [ ]::in-process...
+
 // Begin the HTML Document
 ?>
 <!DOCTYPE html>

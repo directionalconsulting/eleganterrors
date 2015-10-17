@@ -101,7 +101,7 @@ function smarty_function_html_radios($params, &$smarty)
     }
 
     if (!isset($options) && !isset($values))
-        return ''; /* raise error here? */
+        return ''; /* raise errors here? */
 
     $_html_result = array();
 

@@ -46,7 +46,7 @@ function smarty_core_get_php_resource(&$params, &$smarty)
     }
 
     /*
-     * Set the error function, depending on which class calls us.
+     * Set the errors function, depending on which class calls us.
      */
     if (method_exists($smarty, '_syntax_error')) {
         $_error_funcc = '_syntax_error';

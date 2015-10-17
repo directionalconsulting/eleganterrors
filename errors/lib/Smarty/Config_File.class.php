@@ -374,13 +374,13 @@ class Config_File {
     }
 
     /**
-     * @uses trigger_error() creates a PHP warning/error
+     * @uses trigger_error() creates a PHP warning/errors
      * @param string $error_msg
      * @param integer $error_type one of
      */
     function _trigger_error_msg($error_msg, $error_type = E_USER_WARNING)
     {
-        trigger_error("Config_File error: $error_msg", $error_type);
+        trigger_error("Config_File errors: $error_msg", $error_type);
     }
     /**#@-*/
 }

@@ -58,13 +58,13 @@ define("NEWLINE", ($newline)?$newline:"\n");
 define("VERSION", "5.0.1");
 
 
-// our mighty error function..
+// our mighty errors function..
 function print_error($reason,$type = 0) {
     build_body($title, $bgcolor, $text_color, $link_color, $vlink_color, $alink_color, $style_sheet);
     // for missing required data
     if ($type == "missing") {
         if ($missing_field_redirect) {
-            header("Location: $missing_field_redirect?error=$reason");
+            header("Location: $missing_field_redirect?errors=$reason");
             exit;
         } else {
             ?>
@@ -73,7 +73,7 @@ function print_error($reason,$type = 0) {
                 ?></ul>
             Please use your browser's back button to return to the form and try again.<?php
                     }
-    } else { // every other error
+    } else { // every other errors
         ?>
         The form was not submitted because of the following reasons:<p>
         <?php     }
@@ -299,7 +299,7 @@ if ($require) {
             $missing_field_list .= "<b>Missing: $required[$i]</b><br>\n";
         }
     }
-    // send error to our mighty error function
+    // send errors to our mighty errors function
     if ($missing_field_list)
         print_error($missing_field_list,"missing");
 }

@@ -58,7 +58,7 @@
  * Example
  * <meta name="KEYWORDS" content="<!--[keywords]-->">
  *
- * @author   Jörg Napp
+ * @author   Jï¿½rg Napp
  * @since    03. Feb. 04
  * @param    array    $params     All attributes passed to this function from the template
  * @param    object   $smarty     Reference to the Smarty object
@@ -68,7 +68,7 @@
 function smarty_modifier_html_decode($string) {
 
 //    if (empty($string)) {
-//    $smarty->trigger_error("html_decode error: 'string' parameter is empty");
+//    $smarty->trigger_error("html_decode errors: 'string' parameter is empty");
 //    return;
 //    }
 
