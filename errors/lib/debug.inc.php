@@ -1,31 +1,35 @@
 <?php
 /**
- * Created by PhpStorm
- * Project: eleganterrors
- * User: gman
- * Date: 10/16/15
- * Time: 8:11 AM
+ * Project: ElegantErrors
  * @created 2015-10-16 08:11:35
- * @author Gordon Hackett
+ * @author Gordon Hackett - Directional-Consulting
+ * @updated 1445098440659
+ * @package ElegantErrors
  **/
 
-if (!isset($debug) || empty($debug)) {
+// Check if constant _DEBUG is true and then set string for php.ini values...
+if (defined(_DEBUG)) {
+	( _DEBUG == true ) ? $debug = 'On' : $debug = 'Off';
+} else if (!isset($debug) || empty($debug)) {
 	$debug = 'On';
 }
 
+// Set php.ini values and flags for debugging or production...
 ($debug == 'On') ? $errorlevel = 'E_ALL' : $errorlevel = 'E_ALL && ~E_NOTICE && E_DEPRECATED && ~E_STRICT';
 ini_set('error_reporting', $errorlevel);
 
+// Only display errors if $debug is On
 ini_set('display_errors', "{$debug}");
 ini_set('html_errors', "{$debug}");
 
+// Always log errors
 ini_set('log_errors', 'On');
-$basedir = realpath(dirname(__DIR__));
-$errorlog = $basedir.'/php_error.log';
+$errorlog = 'php_error.log';
 if (!file_exists($errorlog)) {
 	touch( $errorlog );
 }
 ini_set('error_log', $errorlog);
 
+// This is always true just for log legibility and cleanliness,,,
 ini_set('ignore_repeated_source', 'On');
 ini_set('ignore_repeated_errors', 'On');

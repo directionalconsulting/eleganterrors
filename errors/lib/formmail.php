@@ -1,34 +1,12 @@
 <?php
-/*
-##############################################################################
-# PLEASE DO NOT REMOVE THIS HEADER!!!
-#
-# COPYRIGHT NOTICE
-#
-# FormMail.php v5.0
-# Copyright 2000-2004 Ai Graphics and Joe Lumbroso (c) All rights reserved.
-# Created 07/06/2000   Last Modified 10/28/2003
-# Joseph Lumbroso, http://www.aigraphics.com, http://www.dtheatre.com
-#                  http://www.dtheatre.com/scripts/
-# Contributing authors: 2004 Gordon Hackett gordonhackett.com -security, bug fixes & php index wrapper w/kaptcha
-##############################################################################
-#
-# This cannot and will not be inforced but I would appreciate a link back
-# to any of these sites:
-# http://www.dtheatre.com
-# http://www.aigraphics.com
-# http://www.dtheatre.com/scripts/
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-# OTHER DEALINGS IN THE SOFTWARE.
-#
-##############################################################################
-*/
+/**
+ * @author Gordon Hackett -  Directional-Consulting
+ * @date 2015-10-17 08:17:33
+ * @timestamp 1445095063089
+ * @version 5.1.1
+ * @see formmail.php circa 2004 from PHP Classes website - original author references no longer working...
+ * @TODO - convert old package into clean modular class...
+ **/
 
 if (!defined('_TLDDOMAIN')) {
     define('_TLDDOMAIN',$_SERVER['HTTP_HOST']);

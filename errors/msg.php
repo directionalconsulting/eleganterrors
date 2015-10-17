@@ -1,31 +1,33 @@
 <?php
 /**
- * Created by PhpStorm
+ * @package ElegantErrors
+ * @description  HTTP Status Codes & ErrorDocument directives with customizable templates and built in contact form
  * @author Gordon Hackett - Directional-Consulting
- * @date 2015-10-02 15:03:17
- * @version 0.2.2
- * @revised 2015-10-16 19:58:14
- * @timestamp 1445050720084
- * @package ErrorDocuments - Error Message with passed in code value and message / images template redesign
+ * @created 2015-10-02 15:03:17
+ * @version 0.3.1
+ * @updated 2015-10-17 09:29:32
+ * @timestamp 1445099364139
  **/
 
-require_once('lib/debug.inc.php');
-
-// Define Globals
-define ('_TLDDOMAIN', $_SERVER['HTTP_HOST']);
+// Define global constants used for Smarty templates and loading of templates...
+// @TODO - Eventually replace this system with clean autoloading classes and modules ;)
+define ('_DOMAIN', $_SERVER['HTTP_HOST']);
 define ('_DEBUG', false);
 define ('_ROOT', dirname(__DIR__));
 define ('_BASE', basename(__DIR__));
-define ('SMARTY_DIR', _ROOT."/"._BASE."/lib/Smarty/");
-define ('_SITENAME', 'Elegant Errors');
-define ('_INCLUDES',"lib/");
+define ('_SMARTY',  _ROOT."/"._BASE."/lib/Smarty/");
+define ('_LIB', "lib/");
+
+ini_set('session.auto_start','On');
+
+require_once(_LIB.'debug.inc.php');
 
 /**
- * Class ErrorDocument
+ * Class ElegantErrors
  *
- * Error code status as passed by Apache Server using ErrorDocument directives in .htaccess file or PHP by system or user controlled trigger_error statements within try & catch Exception blocks of code
+ * Error code status as passed by Apache Server using ElegantErrors directives in .htaccess file or PHP by system or user controlled trigger_error statements within try & catch Exception blocks of code
  */
-class ErrorDocument {
+class ElegantErrors {
 
 	/**
 	 * @int HTTP Status Code XXX
@@ -78,7 +80,7 @@ class ErrorDocument {
 	/**
 	 * @var array
 	 */
-	private $data = array();
+	private $config = array();
 
 	public $stopwatch = null;
 
@@ -94,13 +96,13 @@ class ErrorDocument {
 	function __construct() {
 
 		// Grab requirements for API
-		require_once( _INCLUDES . 'stopwatch.php' );
+		require_once( _LIB . 'stopwatch.php' );
 
 		// Time it just to make sure it's not being abused or hanging
 		$this->stopwatch = new stopwatch;
 
 		// Parse config.yaml and preload all status codes, etc...
-		$this->load_config();
+		$this->loadConfig();
 
 		// Checks msg.php?c=XXX for numerical status code of 1 to 3 digits
 		if (isset($_GET['c']) && preg_match('%\d{1,3}%',$_GET['c'])) {
@@ -113,10 +115,10 @@ class ErrorDocument {
 		}
 
 		// Set the XXX code, response, image and reason for the found $this->code
-		$this->set_status();
+		$this->setStatus();
 
 		// Send the HTTP 1.1/XXX Response
-		$this->send_headers();
+		$this->sendHeaders();
 
 		// @TODO - write render_error function and update Smarty libs...
 //		$this->render_error();
@@ -129,12 +131,12 @@ class ErrorDocument {
 	 *
 	 * @return stdClass
 	 */
-	private function array_to_object($array) {
+	private function arrayToObject($array) {
 		$obj = new stdClass;
 		foreach($array as $k => $v) {
 			if(strlen($k)) {
 				if(is_array($v)) {
-					$obj->{$k} = self::array_to_object($v); //RECURSION
+					$obj->{$k} = self::arrayToObject($v); //RECURSION
 				} else {
 					$obj->{$k} = $v;
 				}
@@ -146,7 +148,7 @@ class ErrorDocument {
 	/**
 	 * Loads Config File using YAML extension
 	 */
-	protected function load_config() {
+	protected function loadConfig() {
 		// @TODO - Add yaml.so check or PECL YAML local file path include function before next lines of code...
 		// return $data as array from lib/config.yaml
 		$yaml = file_get_contents('lib/config.yaml');
@@ -158,19 +160,19 @@ class ErrorDocument {
 			require_once('');
 			$this->yaml_found = false;
 		};
-		$this->data = yaml_parse( $yaml, 0 );
+		$this->config = yaml_parse( $yaml, 0 );
 	}
 
 	/**
 	 * Creates $this->status object with response, reason, image and retry values
 	 */
-	protected function set_status() {
+	protected function setStatus() {
 		// Check if key exists and return status from YAML $codes[] as object
-		if (array_key_exists($this->code,$this->data['codes'])) {
-			$this->status = $this->array_to_object( $this->data['codes'][ (int) $this->code ] );
+		if (array_key_exists($this->code,$this->config['codes'])) {
+			$this->status = $this->arrayToObject( $this->config['codes'][ (int) $this->code ] );
 		} else {
 			$this->code = '520';  // Since the key does not exist, 520 - Unknown Reason
-			$this->status = $this->array_to_object( $this->data['codes'][ (int) $this->code ] );
+			$this->status = $this->arrayToObject( $this->config['codes'][ (int) $this->code ] );
 		}
 	}
 
@@ -178,7 +180,7 @@ class ErrorDocument {
 	 * Send the HTTP Headers for Status -HTTP/1.1: Code Response & -Retry-After: Seconds
 	 * @TODO - Figure out why it works for everything but 407 ???
 	 **/
-	protected function send_headers() {
+	protected function sendHeaders() {
 		$protocol = "HTTP/1.0";
 		if ( "HTTP/1.1" == $_SERVER["SERVER_PROTOCOL"] ) {
 			$protocol = "HTTP/1.1";
@@ -197,12 +199,48 @@ class ErrorDocument {
 	 * @return rendered template view
 	 * $keywords, $displaytitle, $base, $tryagain, $success
 	 **/
-	public function render_form() {
+	public function actionForm() {
 
-		require_once( SMARTY_DIR . "smarty.inc.php" );
+		// Check $_POST for Cancel button, Successful Captcha keystring and some values...
+		$this->success  = 0;
+		$this->tryagain = 0;
+		if ( isset( $_POST ) ) {
+			if ( isset( $_POST['cancel'] ) ) {
+				$this->tryagain = 0;
+				$location       = "http://" . $_SERVER['HTTP_HOST'];
+				unset( $_SESSION['captcha_keystring'] );
+				session_destroy();
+				header( "Location: $location" );
+			} else {
+				if ( count( $_POST ) > 0 ) {
+					if ( isset( $_SESSION['captcha_keystring'] ) && $_SESSION['captcha_keystring'] == $_POST['keystring'] ) {
+						$this->tryagain = 0;
+						$this->success  = 1;
+					} else {
+						$this->tryagain = 1;
+					}
+				}
+			}
+		}
+
+		if ( $this->success == 1 ) {
+			// @TODO - Convert this to boilerplate .tpl & .htm for consistency and security - 2015-09-18 18:22:21
+			// @TODO - Priority lowered - provided captcha works with session keys, with can just clean it up as is for now
+			// @TODO ---> going to say yes, but first let's test as if I hadn't, then I think it's easy - 2015-09-18 18:41:41
+			include_once( _LIB . 'formmail.php' );
+			exit( 0 );
+
+		} else {
+			$this->renderForm();
+		}
+	}
+
+	protected function renderForm() {
+
+		// Load Smarty class using config file and create $smarty instance...
+		require_once( _SMARTY . "smarty.inc.php" );
 		/**
 		 * @package formmail && Smarty
-		 *
 		 * Example of how to set-up static variables embedded into the lib/formmail.php library
 		 *
 		 * Step 1. extract($_POST) - if it's present and save state for form reloads...
@@ -244,11 +282,13 @@ class ErrorDocument {
 				'message' => ''
 			);
 		}
+		
+		// Make certain $smarty is initialized before we compile, if not throw error and abort!
+		if (!isset($smarty)) trigger_error('Failed to load '._SMARTY.'/smarty.inc.php in '.__FUNCTION__, E_ERROR);
 
 		$smarty->assign('displaytitle', $this->displaytitle);
 		$smarty->assign('timestamp', $timestamp);
 		$smarty->assign('keywords',$this->keywords);
-		$smarty->assign('time', $time);
 		$smarty->assign('base', $this->base);
 		$smarty->assign('tryagain', $this->tryagain);
 		$smarty->assign('success', $this->success);
@@ -270,7 +310,7 @@ class ErrorDocument {
 	*/
 }
 
-$errDoc = new ErrorDocument();
+$errDoc = new ElegantErrors();
 // @TODO --> REPLACE Begin the document with render_error and render_form plus update Smarty API -> [ ]::in-process...
 
 // Begin the HTML Document

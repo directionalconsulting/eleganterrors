@@ -1,25 +1,27 @@
 <?php
+// Load our Smarty library using our predefined location...
+require(_SMARTY.'Smarty.class.php');
 
-if (_DEBUG) {
-	echo "<br />smarty.inc.php found - ".SMARTY_DIR."cache * templates * templates_c<br />\n";
-}
-require(SMARTY_DIR.'Smarty.class.php');
+// Create the class and GO!
 $smarty = new Smarty;
+if (_DEBUG) {
+	$smarty->debugging = true;
+}
+// @TODO - Add Smarty caching options to config file including time to expire and refresh...
 $smarty->caching = 0;
 $smarty->compile_check = true;
 $smarty->cache_modified_check = true;
 $smarty->php_handling = SMARTY_PHP_ALLOW;
 
-if (_DEBUG) {
-	$smarty->debugging = true;
-}
-
+// Optionally change the deliminters for your templates... - hard wired
 //$smarty->left_delimiter = '<!--[';
 //$smarty->right_delimiter = ']-->';
 
-$smarty->template_dir = SMARTY_DIR."templates";
-$smarty->compile_dir = SMARTY_DIR."templates_c";
-$smarty->cache_dir = SMARTY_DIR."cache";
-//$smarty->config_dir = SMARTY_DIR."configs";
+// Directories require read & write permissions by apache / www-data user or suexec... 775
+$smarty->template_dir = _SMARTY."templates";
+$smarty->compile_dir = _SMARTY."templates_c";
+$smarty->cache_dir = _SMARTY."cache";
+
+//$smarty->config_dir = _SMARTY."configs";
 
 ?>

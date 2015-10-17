@@ -1,6 +1,6 @@
 # Elegant Errors
 
-## Error Documents with customizable templates and self contained Contact Form
+### HTTP Status Codes & ErrorDocument directives with customizable templates and built in contact form
 
 We've all seen the very blank and less than helpful standard *404 Page Not Found* or the occasional *500 Internal Server Error* when things really have gone wrong.
  
@@ -16,7 +16,7 @@ The secure contact form captures the referrer URL, date & time, error code, serv
 
 Copy the required directives from **/.htaccess** file into your .htaccess file.
 
-+ ErrorDocument - *all of these are required - they are currently Apache 2.x only*
++ ElegantErrors - *all of these are required - they are currently Apache 2.x only*
 + RewriteRules - *anything referencing /errors folder*
 + DirectoryIndex - *only if your .htaccess file does not already have this directive*
 + **All Other Rules -** *optional :: mostly from other files collected over time, please comment...*
