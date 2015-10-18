@@ -15,12 +15,14 @@ define ('_DOMAIN', $_SERVER['HTTP_HOST']);
 define ('_DEBUG', false);
 define ('_ROOT', dirname(__DIR__));
 define ('_BASE', basename(__DIR__));
-define ('_SMARTY',  _ROOT."/"._BASE."/lib/Smarty/");
+define ('_SMARTY', _ROOT."/"._BASE."/lib/Smarty/");
 define ('_LIB', "lib/");
 
 ini_set('session.auto_start','On');
 
 require_once(_LIB.'debug.inc.php');
+
+$elegance = new ElegantErrors();
 
 /**
  * Class ElegantErrors
@@ -57,42 +59,22 @@ class ElegantErrors {
 	public $yaml_ext;
 
 	/**
-	 * @boolean yaml_pecl - true / false (bool)
-	 */
-	public $yaml_pecl;
+	 * @var $config array() of config.yaml values
+	 * @TODO - Add remoteAuth to permit remote updates to select config options...
+	 **/
+	public $config = null;
 
-	/**
-	 * @var string URL to developer's website
-	 */
-	public $credit_link = 'http://gordonhackett.com/senior-software-engineer/';
+	private $yaml = array();
 
-	/**
-	 * @var string URL for Contact Us Link
-	 */
-	public $contact_link = 'mailto:ctsdotcom1@aol.com';
+	private $route = null;
 
-	/**
-	 * @var string Background Image default image
-	 * @TODO - Add directory support for random images, like space, cats, nature, etc.. - include ALL mode: recursive
-	 */
-	public $bkgd_image = 'bkgd1.jpg';
+	public $timestamp, $base, $remoteip, $useragent, $referrer, $redirect, $script, $request = null;
 
-	/**
-	 * @var array
-	 */
-	private $config = array();
-
-	public $stopwatch = null;
-
-	public $keywords, $displaytitle = null;
-
-	public $time, $base, $remoteip, $useragent, $referrer, $redirect, $script, $request = null;
-
-	public $tryagain, $success = false;
+	public $tryagain, $success, $stopwatch = false;
 
 	/**
 	 * Construct for class automatically instantiated when a new class instance is created, done one-shot!
-	 */
+	 **/
 	function __construct() {
 
 		// Grab requirements for API
@@ -105,14 +87,19 @@ class ElegantErrors {
 		$this->loadConfig();
 
 		// Checks msg.php?c=XXX for numerical status code of 1 to 3 digits
-		if (isset($_GET['c']) && preg_match('%\d{1,3}%',$_GET['c'])) {
-			$this->code = sprintf('%03d',$_GET['c']);
+		if (isset($_GET['c']) && preg_match('%\d{1,4}%',$_GET['c'])) {
+			$this->code = sprintf('%04d',$_GET['c']);
 		}
 
 		// Checks msg.php?c=xxxurl=www.example.com for 3xx and redirect
 		if (isset($_GET['url']) && preg_match('%3\d{2,}%',$this->code)) {
 			$this->url = $_GET['url'];
+		} else {
+			$this->url = null;
 		}
+
+		// Get REQUEST_URI and find a route from config.yaml...
+		$this->route = $this->getRoute();
 
 		// Set the XXX code, response, image and reason for the found $this->code
 		$this->setStatus();
@@ -121,7 +108,7 @@ class ElegantErrors {
 		$this->sendHeaders();
 
 		// @TODO - write render_error function and update Smarty libs...
-//		$this->render_error();
+		$this->renderView($this->route);
 
 	} // end __construct()
 
@@ -151,7 +138,7 @@ class ElegantErrors {
 	protected function loadConfig() {
 		// @TODO - Add yaml.so check or PECL YAML local file path include function before next lines of code...
 		// return $data as array from lib/config.yaml
-		$yaml = file_get_contents('lib/config.yaml');
+		$yaml = file_get_contents(_LIB.'config.yaml');
 		if ( extension_loaded ( 'yaml' )) {
 			// use YAML extension from PHP ini as detected above
 			$this->yaml_found = true;
@@ -160,19 +147,40 @@ class ElegantErrors {
 			require_once('');
 			$this->yaml_found = false;
 		};
-		$this->config = yaml_parse( $yaml, 0 );
+		// Load YAML file as array and then convert to object for use by app...
+		$this->yaml  = yaml_parse( $yaml, 0 );
+		$this->config = $this->arrayToObject($this->yaml);
+
+		// Define _SITENAME used in templates, optionally set it in config file
+		(isset($this->config->sitename) && !empty($this->config->sitename)) ?
+			define("_SITENAME", $this->config->sitename) : define("_SITENAME", $_SERVER['HTTP_HOST']);
+	}
+
+	protected function getRoute() {
+		// @TODO - Implement this properly, it was just a test for now...
+		$request = $_SERVER['REQUEST_URI'];
+		$map = $this->config->routes;
+		$urls = array_values($map);
+		$routes = array_keys($map);
+		if (in_array($request,$urls)) {
+			$found = array_intersect_assoc($request,$map);
+		} else {
+			$found = 'errors';
+		}
+		return $found;
 	}
 
 	/**
 	 * Creates $this->status object with response, reason, image and retry values
 	 */
 	protected function setStatus() {
+		$code = (int) $this->code;
 		// Check if key exists and return status from YAML $codes[] as object
-		if (array_key_exists($this->code,$this->config['codes'])) {
-			$this->status = $this->arrayToObject( $this->config['codes'][ (int) $this->code ] );
+		if (array_key_exists($code,$this->yaml['codes'])) {
+			$this->status = $this->arrayToObject( $this->yaml['codes'][ $code ] );
 		} else {
 			$this->code = '520';  // Since the key does not exist, 520 - Unknown Reason
-			$this->status = $this->arrayToObject( $this->config['codes'][ (int) $this->code ] );
+			$this->status = $this->arrayToObject( $this->yaml['codes'][ $code ] );
 		}
 	}
 
@@ -181,26 +189,32 @@ class ElegantErrors {
 	 * @TODO - Figure out why it works for everything but 407 ???
 	 **/
 	protected function sendHeaders() {
+
+		// @TODO - See if there's any need or better way to handle this...
 		$protocol = "HTTP/1.0";
 		if ( "HTTP/1.1" == $_SERVER["SERVER_PROTOCOL"] ) {
 			$protocol = "HTTP/1.1";
 		}
+
+		// @TODO --> else send 407 somewhere with proper HTTP/1.1: 407 Response, but where/how... ???
 		if (!in_array((int)$this->code,array(407))) {
-			header( "$protocol {$this->code} {$this->status->response}", true, $this->code );
-			if (isset( $this->status->retry)) {
-				header( "Retry-After: " . $this->status->retry );
+
+			// Quick safety check before accidentally sending humorous HTTP header causing actual error...
+			if ((int) $this->code < 599 && (int) $this->code > 99) {
+				header( "$protocol {$this->code} {$this->status->response}", true, $this->code );
+
+				// Send Retry-After if not empty...
+				if (isset($this->status->retry) && !empty($this->status->retry)) {
+					header( "Retry-After: " . $this->status->retry );
+				}
 			}
-		} // @TODO --> else send 407 somewhere with proper HTTP/1.1: 407 Response, but where/how... ???
+		}
 	}
 
 	// @TODO - Convert all template.inc.php's to template.tpl's Smarty && update library API's...
-
 	/**
-	 * @return rendered template view
-	 * $keywords, $displaytitle, $base, $tryagain, $success
-	 **/
-	public function actionForm() {
-
+	 *
+	 *
 		// Check $_POST for Cancel button, Successful Captcha keystring and some values...
 		$this->success  = 0;
 		$this->tryagain = 0;
@@ -223,29 +237,14 @@ class ElegantErrors {
 			}
 		}
 
-		if ( $this->success == 1 ) {
-			// @TODO - Convert this to boilerplate .tpl & .htm for consistency and security - 2015-09-18 18:22:21
-			// @TODO - Priority lowered - provided captcha works with session keys, with can just clean it up as is for now
-			// @TODO ---> going to say yes, but first let's test as if I hadn't, then I think it's easy - 2015-09-18 18:41:41
-			include_once( _LIB . 'formmail.php' );
-			exit( 0 );
-
-		} else {
-			$this->renderForm();
-		}
-	}
-
-	protected function renderForm() {
-
-		// Load Smarty class using config file and create $smarty instance...
-		require_once( _SMARTY . "smarty.inc.php" );
-		/**
 		 * @package formmail && Smarty
 		 * Example of how to set-up static variables embedded into the lib/formmail.php library
 		 *
 		 * Step 1. extract($_POST) - if it's present and save state for form reloads...
 		 *
-		 * Step 2. Decode & Sanititize the variables to prevent injection... @TODO - Improve upon this from previous work I've done ;)
+		 * Step 2. Decode & Sanititize the variables to prevent injection...
+	 *
+	 * @TODO - Improve upon this from previous work I've done ;)
 		 *
 		 * // Some built in variables in the formmail package...
 		 *
@@ -263,90 +262,66 @@ class ElegantErrors {
 		 * Step 3. Load Smarty Vars, Cache Options, & Filters -> Render View
 		 **/
 
-		if (isset($_SERVER['REMOTE_ADDR']))
-		{
-			$this->remoteip = $_SERVER["REMOTE_ADDR"];
-		}
+	protected function renderView($template) {
 
-		// Record the time it was reported to make log inspection easier...
-		$timestamp = strftime("%m-%d-%y_%H-%M",strtotime("now")) ;
+		$this->withClass();
 
-		// Save the form if we have some $_POST[] Array data, else fill the necessary basic blank fields...
-		if (isset($_POST) and !empty($_POST)) {
-			$DATA = $_POST;
-		} else {
-			$DATA = array(
-				'first' => '',
-				'last' => '',
-				'email' => '',
-				'message' => ''
-			);
-		}
-		
+		// Load Smarty class using config file and create $smarty instance...
+		require_once( _SMARTY . "smarty.inc.php" );
+
 		// Make certain $smarty is initialized before we compile, if not throw error and abort!
 		if (!isset($smarty)) trigger_error('Failed to load '._SMARTY.'/smarty.inc.php in '.__FUNCTION__, E_ERROR);
 
-		$smarty->assign('displaytitle', $this->displaytitle);
-		$smarty->assign('timestamp', $timestamp);
-		$smarty->assign('keywords',$this->keywords);
-		$smarty->assign('base', $this->base);
-		$smarty->assign('tryagain', $this->tryagain);
-		$smarty->assign('success', $this->success);
-		$smarty->assign('sitename', _SITENAME);
-		$smarty->assign('elapsed', $this->stopwatch->get_elapsed());
-
-		$smarty->assign('subject', __SUBJECT." - ".$this->code." ".$this->status->response);
-		foreach ($DATA as $key => $value) {
-			$smarty->assign($key, stripslashes(urldecode($value)));
+		if (!isset($this->config->title) || empty($this->config->title)) {
+			$this->config->title = __CLASS__." - ".$this->code." ".$this->status->response;
 		}
-		$smarty->display('contactus_index.tpl');
+
+//		$smarty->assign('description', $this->description);
+//		$smarty->assign('timestamp', $timestamp);
+//		$smarty->assign('keywords',$this->keywords);
+		$smarty->assign('base', $this->base);
+		$smarty->assign('sitename', _SITENAME);
+		$smarty->assign('url',$this->url);
+		$smarty->assign('code',$this->code);
+		$smarty->assign('config',$this->config);
+		$smarty->assign('status',$this->status);
+		$smarty->assign('stopwatch', $this->stopwatch);
+
+		$smarty->display($template.'.tpl');
 		return true;
 	}
 
-	/*
-	// @TODO - Very similar function to above -#@$!~~~ (^_^) ~~~!$@#-
-	protected function render_view() {
+	protected function withClass() {
+		// @TODO - Add (?? PostreSQL / MySQL / InfluxDB / Mongo ??) for data tracking and health monitoring...
+
+		// Save all the posted values as XML for now...
+		$posted = $this->arrayToXML($_POST);
+
+		$remoteip = $_SERVER['REMOTE_ADDR'];
+		$useragent = $_SERVER['HTTP_USER_AGENT'];
+		$referrer  = $_SERVER['HTTP_REFERER'];
+		$request = $_SERVER['REQUEST_URI'];
+		$time = $_SERVER['REQUEST_TIME'];
+		$host = $_SERVER['HTTP_HOST'];
+
+		$json = serialize(array($remoteip,$useragent,$referrer,$request,$time,$host));
+		if (!isset($_SESSION['withClass']) && empty($_SESSION['withClass'])) {
+			$this->config->json = $json;
+			$_SESSION['withClass'] = base64_encode($json);
+		} else {
+			$this->config->json = base64_decode($_SESSION['withClass']);
+		}
 	}
-	*/
+
+	private function arrayToXML($data = null) {
+		if (empty($data)) {
+			return false;
+		}
+		$xml = new SimpleXMLElement('<root/>');
+		array_walk_recursive($data , array ($xml, 'addChild'));
+		return $xml->saveXML();  // content of $_POST array(s) are now an XML content that can used
+	}
+
 }
-
-$errDoc = new ElegantErrors();
 // @TODO --> REPLACE Begin the document with render_error and render_form plus update Smarty API -> [ ]::in-process...
-
-// Begin the HTML Document
 ?>
-<!DOCTYPE html>
-<html>
-<?php include_once( 'lib/header.inc.php' ); ?>
-<body>
-	<div id="canvas">
-		<div id="leftpanel">
-		</div>
-		<div id="rightpanel">
-		</div>
-		<div id="page">
-			<div id="content">
-					<?php echo file_get_contents('lib/warning.htm'); ?>
-					<div class="row">
-						<div id="response">
-							<div class="main-icon text-warning"><span class="uxicon uxicon-alert"></span></div>
-							<h1><?php echo $errDoc->status->response; ?></h1>
-							<img src="assets/img/<?php echo $errDoc->status->image; ?>" alt="<?php echo $errDoc->status->response; ?>">
-						</div>
-					</div>
-					<div class="row">
-						<div id="reason">
-							<?php if (isset($errDoc->url) && !empty($errDoc->url)): ?>
-							<p>Please follow <a href="<?php echo $errDoc->url; ?>">this link</a></p>
-							<?php endif; ?>
-							<p><?php echo $errDoc->status->reason; ?><br />
-								<?php require_once( 'lib/contact.inc.php' ); ?>
-							</p>
-						</div>
-					</div>
-				<?php require_once( 'lib/footer.inc.php' ); ?>
-			</div>
-		</div>
-	</div>
-</body>
-</html>

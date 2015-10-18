@@ -14,8 +14,8 @@ $smarty->cache_modified_check = true;
 $smarty->php_handling = SMARTY_PHP_ALLOW;
 
 // Optionally change the deliminters for your templates... - hard wired
-//$smarty->left_delimiter = '<!--[';
-//$smarty->right_delimiter = ']-->';
+$smarty->left_delimiter = '<!--[';
+$smarty->right_delimiter = ']-->';
 
 // Directories require read & write permissions by apache / www-data user or suexec... 775
 $smarty->template_dir = _SMARTY."templates";

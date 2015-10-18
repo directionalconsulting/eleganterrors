@@ -1,4 +1,15 @@
 ---
+package: Elegant Errors
+sitename:
+credits:
+  link: https://github.com/directionalconsulting/eleganterrors
+  imagetext: #@TODO - Find, adapt, create, make an image and caption...
+  image:
+  reason: It's time to clean up those ugly server mistakes using ErrorDocuments, RewriteRules and Class
+  response: Out Class The Others
+contact_link: /errors/support
+#TODO - Add directory support for random images, like space, cats, nature, etc.. - include recursive feature
+bkgd_img: bkgd1.jpg
 codes:
   307:
     response: Temporary Redirect
@@ -148,8 +159,73 @@ codes:
     reason:  Licence to kill in the field, at agent's discretion, to complete the mission granted,
     image: licensed_to_kill.jpg
     retry: 0
-version: 0.3.2
-release: 1443909696089
+  1000:
+    response: New Year's Day
+    reason:
+    image:
+    retry: 0
+  1001:
+    response: Birthday of Martin Luther King, Jr.
+    reason:
+    image:
+    retry: 0
+  1002:
+    response: President's Day
+    reason:
+    image:
+    retry: 0
+  1003:
+    response: Memorial Day
+    reason:
+    image:
+    retry: 0
+  1004:
+    response: Independenace Day
+    reason:
+    image:
+    retry: 0
+  1005:
+    response: Labor Day
+    reason:
+    image:
+    retry: 0
+  1006:
+    response: Columbus Day
+    reason:
+    image:
+    retry: 0
+  1007:
+    response: Verterans Day
+    reason:
+    image:
+    retry: 0
+  1008:
+    response: Happy Thanksgiving!
+    reason: It's hard to soar with the eagles, when you're surrounded by turkeys,
+    image: thanksgiving.png
+    retry: 3600
+  1009:
+    response: Merry Christmas
+    reason:
+    image:
+    retry: 0
+  1010:
+    response: Happy Valentine's
+    reason:
+    image:
+    retry: 0
+  1011:
+    response: St. Patrick's Day
+    reason:
+    image:
+    retry: 0
+  1012:
+    response: Happy Halloween
+    reason:
+    image:
+    retry: 0
+version: 0.3.3
+release: 1445104693052
 copyright_link: |-
   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>
 

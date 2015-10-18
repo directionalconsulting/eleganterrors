@@ -6,4 +6,4 @@
  * @package ErrorDocuments - contact.inc.php ~ details to include on every page, global settings include file
  */
 
-?><a href="<?php echo $errDoc->contact_link; ?>" class="contact" title="Contact Us">please contact us.</a>
+?><a href="<?php echo $this->config->contact_link; ?>" class="contact" title="Contact Us">please contact us.</a>
