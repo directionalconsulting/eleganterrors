@@ -26,6 +26,43 @@ body {
     opacity: 0.7;
 }
 
+#footer {
+    width: 100%;
+    text-align: center;
+    vertical-align: text-top;
+    text-decoration: none;
+}
+
+#doormat {
+    width: 50%;
+}
+
+#leftshoe, #doormat, #rightshoe {
+    display: inline-block;
+    clear: none;
+    margin: 1em 5%;
+    padding: .5em;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/**
+*@TODO - Remove hardwired values in Class and bring it back to CSS here...
+*
+#alert {
+    color: hotpink;
+    color: orange;
+    color: red;
+    color: yellow;
+    color: black;
+    color: grey;
+    color: silver;
+    color: greenyellow;
+    color: darkviolet;
+    color: firebrick;
+}
+**/
+
 a {
     text-decoration: none;
 }

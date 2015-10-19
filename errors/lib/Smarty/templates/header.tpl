@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html>
 	<head>
 
 		<title><!--[$config->title]--></title>
@@ -24,6 +22,3 @@
 		<meta name="keywords" content="<!--[$keywords]-->" />
 		<meta name="description" content="<!--[$description|strip_tags|html_decode]-->" />
 	</head>
-	<body>
-		<div align="center">
-			<div class="content">

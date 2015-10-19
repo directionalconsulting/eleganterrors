@@ -10,6 +10,11 @@ credits:
 contact_link: /errors/support
 #TODO - Add directory support for random images, like space, cats, nature, etc.. - include recursive feature
 bkgd_img: bkgd1.jpg
+routes:
+  errors: .+\.php\?c=(\d{1,4})|.+\.php\?c=(\d{1,4})&r=(.+)|/error.+/\d{1,4}|/error.+/\d{1,4}/[a-z0-9-_.#+:/]{1,}
+  credits: .+credits
+  sent: .+messege-sent
+  form: .+contact
 codes:
   307:
     response: Temporary Redirect

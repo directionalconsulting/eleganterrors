@@ -64,8 +64,6 @@ class ElegantErrors {
 	 **/
 	public $config = null;
 
-	private $yaml = array();
-
 	private $route = null;
 
 	public $timestamp, $base, $remoteip, $useragent, $referrer, $redirect, $script, $request = null;
@@ -99,7 +97,7 @@ class ElegantErrors {
 		}
 
 		// Get REQUEST_URI and find a route from config.yaml...
-		$this->route = $this->getRoute();
+		$this->getRoute();
 
 		// Set the XXX code, response, image and reason for the found $this->code
 		$this->setStatus();
@@ -112,25 +110,6 @@ class ElegantErrors {
 
 	} // end __construct()
 
-	/**
-	 * Recursive Array to Object converter to make arrays OOPS friendly
-	 * @param $array
-	 *
-	 * @return stdClass
-	 */
-	private function arrayToObject($array) {
-		$obj = new stdClass;
-		foreach($array as $k => $v) {
-			if(strlen($k)) {
-				if(is_array($v)) {
-					$obj->{$k} = self::arrayToObject($v); //RECURSION
-				} else {
-					$obj->{$k} = $v;
-				}
-			}
-		}
-		return $obj;
-	}
 
 	/**
 	 * Loads Config File using YAML extension
@@ -148,8 +127,8 @@ class ElegantErrors {
 			$this->yaml_found = false;
 		};
 		// Load YAML file as array and then convert to object for use by app...
-		$this->yaml  = yaml_parse( $yaml, 0 );
-		$this->config = $this->arrayToObject($this->yaml);
+		$data  = yaml_parse( $yaml, 0 );
+		$this->config = $this->arrayToObject($data);
 
 		// Define _SITENAME used in templates, optionally set it in config file
 		(isset($this->config->sitename) && !empty($this->config->sitename)) ?
@@ -157,17 +136,18 @@ class ElegantErrors {
 	}
 
 	protected function getRoute() {
-		// @TODO - Implement this properly, it was just a test for now...
+		// @TODO - Implemented 2015-10-19 00:09:32, testing in-process...
 		$request = $_SERVER['REQUEST_URI'];
-		$map = $this->config->routes;
-		$urls = array_values($map);
-		$routes = array_keys($map);
-		if (in_array($request,$urls)) {
-			$found = array_intersect_assoc($request,$map);
-		} else {
-			$found = 'errors';
+		$routes = $this->objectToArray($this->config->routes);
+		// Search the routes for a matching regex URL pattern to return a template...
+		foreach ($routes as $template => $path) {
+			if (preg_match("%{$path}%",$request)) {
+				$this->route = $template;
+			}
 		}
-		return $found;
+		// Default to 520 Unknown if everything fails, since nobody knows...
+		if (empty($this->route))
+			$this->route = 'errors';
 	}
 
 	/**
@@ -176,11 +156,37 @@ class ElegantErrors {
 	protected function setStatus() {
 		$code = (int) $this->code;
 		// Check if key exists and return status from YAML $codes[] as object
-		if (array_key_exists($code,$this->yaml['codes'])) {
-			$this->status = $this->arrayToObject( $this->yaml['codes'][ $code ] );
+		if (is_object($this->config->codes->$code)) {
+			$this->status = $this->config->codes->$code;
 		} else {
 			$this->code = '520';  // Since the key does not exist, 520 - Unknown Reason
-			$this->status = $this->arrayToObject( $this->yaml['codes'][ $code ] );
+			$this->status = $this->config->codes->$code;
+		}
+		switch (true) {
+			case (int)$this->code < 100:
+				$this->status->color = 'darkviolet';
+				break;
+			case (int)$this->code < 200:
+				$this->status->color = 'silver';
+				break;
+			case (int)$this->code < 300:
+				$this->status->color = 'yellowgreen';
+				break;
+			case (int)$this->code < 400:
+				$this->status->color = "yellow";
+				break;
+			case (int)$this->code < 500:
+				$this->status->color = 'black';
+				break;
+			case (int)$this->code < 600:
+				$this->status->color = 'red';
+				break;
+			// TODO - Add more colors for the Alerts based on the service codes...
+			case (int)$this->code > 999:
+				$this->status->code = 'hotpink';
+				break;
+			default:
+				$this->status->color = 'red';
 		}
 	}
 
@@ -313,6 +319,26 @@ class ElegantErrors {
 		}
 	}
 
+	/**
+	 * Recursive Array to Object converter to make arrays OOPS friendly
+	 * @param $array
+	 *
+	 * @return stdClass
+	 */
+	private function arrayToObject($array) {
+		$obj = new stdClass;
+		foreach($array as $k => $v) {
+			if(strlen($k)) {
+				if(is_array($v)) {
+					$obj->{$k} = self::arrayToObject($v); //RECURSION
+				} else {
+					$obj->{$k} = $v;
+				}
+			}
+		}
+		return $obj;
+	}
+
 	private function arrayToXML($data = null) {
 		if (empty($data)) {
 			return false;
@@ -320,6 +346,20 @@ class ElegantErrors {
 		$xml = new SimpleXMLElement('<root/>');
 		array_walk_recursive($data , array ($xml, 'addChild'));
 		return $xml->saveXML();  // content of $_POST array(s) are now an XML content that can used
+	}
+
+	private function objectToArray($data = null) {
+
+		if (is_array($data) || is_object($data))
+		{
+			$result = array();
+			foreach ($data as $key => $value)
+			{
+				$result[$key] = self::objectToArray($value);
+			}
+			return $result;
+		}
+		return $data;
 	}
 
 }
