@@ -1,9 +1,9 @@
 form {
-    border: 1px yellow double;
+    /*border: 1px yellow double;*/
     text-align: center;
     padding: 15px;
     margin: 15px auto;
-    width: 100%;
+    /*width: 100%;*/
 }
 
 label {

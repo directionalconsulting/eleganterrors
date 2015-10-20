@@ -1,15 +1,10 @@
-/*@import url(/wp-admin/css/login.css);*/
-/*@import url(/wp-admin/css/colors/midnight/colors.css);*/
-body {
-    background-color: whitesmoke;
-}
-
 body {
     font-family: "Helvetica Neue", "Segoe UI", Segoe, Helvetica, Arial, "Lucida Grande", sans-serif;
     font-weight: normal;
     margin: 0;
     padding: 0;
     text-align: center;
+    background-color: whitesmoke;
 }
 
 #canvas {
@@ -136,7 +131,6 @@ a.credits:link, a.credits:visited {
     border-style: double;
     border-color: darkgrey;
     border-width: thick;
-    border-spacing: 5px;
     margin: 10px auto;
     display: block;
     background-color: floralwhite;
@@ -149,10 +143,14 @@ a.credits:link, a.credits:visited {
     content: " ";
 }
 
+.row {
+    margin: 0;
+    padding: 0;
+}
+
 #reason, #response {
     font-size: 21px;
     font-weight: 200;
-    margin-bottom: 20px;
 }
 
 #response img {
@@ -164,7 +162,6 @@ a.credits:link, a.credits:visited {
 #response h1 {
     font-size: 48px;
     font-weight: 300;
-    margin: 0 0 20px 0;
 }
 
 /* code */

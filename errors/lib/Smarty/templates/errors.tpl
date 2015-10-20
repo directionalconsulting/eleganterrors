@@ -10,18 +10,17 @@
 			<div id="page">
 				<div id="content">';
 					<!--[include file="alert.tpl"]-->
+					<!--[include file="translate.tpl"]-->
 					<div class="row">
 						<div id="response">
 							<div class="main-icon text-warning"><span class="uxicon uxicon-alert"></span></div>
 							<h1><!--[$status->response]--></h1>
-							<img src="<!--[$base]-->assets/img/<!--[$status->image]-->" alt="<!--[$status->response]-->">
+							<img src="<!--[$base]-->/assets/img/<!--[$status->image]-->" alt="<!--[$status->response]-->">
 						</div>
 					</div>
 					<div class="row">
-						<div id="reason">'
-							<!--[php]-->if (isset($url) && !empty($url)):<!--[/php]-->
-							<p>Please follow <a href="<!--[$url]-->">this link</a></p>
-							<!--[php]--> endif; <!--[/php]-->
+						<div id="reason">
+							<!--[include file="url.tpl"]-->
 							<p><!--[$status->reason]--><br />
 								<a href="<!--[$config->contact_link]-->" class="contact" title="Contact Us">please contact us.</a>
 							</p>

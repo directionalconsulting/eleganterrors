@@ -1,21 +1,36 @@
 ---
 package: Elegant Errors
 sitename:
-credits:
-  link: https://github.com/directionalconsulting/eleganterrors
-  imagetext: #@TODO - Find, adapt, create, make an image and caption...
-  image:
-  reason: It's time to clean up those ugly server mistakes using ErrorDocuments, RewriteRules and Class
-  response: Out Class The Others
 contact_link: /errors/support
 #TODO - Add directory support for random images, like space, cats, nature, etc.. - include recursive feature
 bkgd_img: bkgd1.jpg
+credits:
+  link: credits
+  package_link: https://github.com/directionalconsulting/eleganterrors
+  imagetext: #@TODO - Find, adapt, create, make an image and caption...
+  image: elegant.png
+  reason: Because it's a mistake to excuse errors without class,
+  response: Elegant Errors
+meta:
+  description:
+  keywords:
+  author: Gordon Hackett - Directional-Consulting
+#TODO - Add OpenGraph and microFormat support for intergration with Facebook, LinkedIn, Twitter, Google+, SKOS & W3C standards...
+rdf:
+  value1:
+  value2:
+#@see getRoute() for implementation of preg_match and Smarty template selection...
 routes:
   errors: .+\.php\?c=(\d{1,4})|.+\.php\?c=(\d{1,4})&r=(.+)|/error.+/\d{1,4}|/error.+/\d{1,4}/[a-z0-9-_.#+:/]{1,}
   credits: .+credits
-  sent: .+messege-sent
+  sent: .+thank-you
   form: .+contact
 codes:
+  200:
+    response: OK
+    reason: Standard response for successful HTTP requests, got it... OK,
+    image: ok.png
+    retry: 0;
   307:
     response: Temporary Redirect
     reason: Temporarily redirected due to construction,

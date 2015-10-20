@@ -2,7 +2,7 @@
 
 ### HTTP Status Codes & ErrorDocument directives with customizable templates and built in contact form
 
-> It's time to clean up those ugly server mistakes using ErrorDocuments, RewriteRules and Class
+> Because it's a mistake to excuse one's errors without class
 
 We've all seen the very blank and less than helpful standard *404 Page Not Found* or the occasional *500 Internal Server Error* when things really have gone wrong.
  

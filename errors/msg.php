@@ -4,9 +4,25 @@
  * @description  HTTP Status Codes & ErrorDocument directives with customizable templates and built in contact form
  * @author Gordon Hackett - Directional-Consulting
  * @created 2015-10-02 15:03:17
- * @version 0.3.1
- * @updated 2015-10-17 09:29:32
- * @timestamp 1445099364139
+ * @version 0.4.1
+ * @updated 2015-10-20 14:05:20
+ * @timestamp 1445375125617
+ * 
+ * This file is part of ElegantErrors.
+ * 
+ * ElegantErrors is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * ElegantErrors is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with ElegantErrors.  If not, see <http://www.gnu.org/licenses/>.
+ *
  **/
 
 // Define global constants used for Smarty templates and loading of templates...
@@ -80,6 +96,8 @@ class ElegantErrors {
 
 		// Time it just to make sure it's not being abused or hanging
 		$this->stopwatch = new stopwatch;
+
+		$this->base = "/"._BASE;
 
 		// Parse config.yaml and preload all status codes, etc...
 		$this->loadConfig();
@@ -279,9 +297,13 @@ class ElegantErrors {
 		if (!isset($smarty)) trigger_error('Failed to load '._SMARTY.'/smarty.inc.php in '.__FUNCTION__, E_ERROR);
 
 		if (!isset($this->config->title) || empty($this->config->title)) {
-			$this->config->title = __CLASS__." - ".$this->code." ".$this->status->response;
+			$this->config->title = $this->code." ".$this->status->response." - ".preg_replace('%,$%','',$this->status->reason)." : ".__CLASS__;
 		}
 
+		// Set the META Description if not exists...
+		if (!is_object($this->config->meta->description) || empty($this->config->meta->description)) {
+			$this->config->meta->description = $this->config->title;
+		}
 //		$smarty->assign('description', $this->description);
 //		$smarty->assign('timestamp', $timestamp);
 //		$smarty->assign('keywords',$this->keywords);
