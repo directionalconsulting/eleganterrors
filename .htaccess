@@ -1,4 +1,9 @@
 # Override Error Handling and make it clear in logs and to visitors
+RewriteEngine on
+RewriteBase /
+
+SetEnv EE_DIR errors
+
 #RewriteCond %{ENV:REDIRECT_STATUS} !=505
 #RedirectPermanent 301 /errors/msg.php?c=301
 #RedirectTemp 302 /errors/msg.php?c=302
@@ -7,6 +12,9 @@
 #Redirect 305 /errors/msg.php?c=305
 #Redirect 306 /errors/msg.php?c=306
 #RedirectTemp 307 "/errors/msg.php?c=307"
+RewriteRule ^errors/contact$ /errors/msg.php?c=1120 [L]
+RewriteRule ^errors/thank-you$ /errors/msg.php?c=1130 [L]
+RewriteRule ^errors/credits$ /errors/msg.php?c=1110 [L]
 #ErrorDocument 042 /errors/msg.php?c=042
 #ErrorDocument 069 /errors/msg.php?c=069
 ErrorDocument 400 /errors/msg.php?c=400
@@ -54,12 +62,6 @@ DirectoryIndex index.php index.shtml index.html
 # Options -ExecCGI means no executing PERL or other +X code without PHP safety checks
 Options -Indexes +FollowSymLinks -ExecCGI
 
-<Files xmlrpc.php>
-order deny,allow
-deny from all
-allow from 104.50.4.180
-allow from 50.63.43.1
-</Files>
 # END GOTMLS Patch to Block XMLRPC Access
 # BEGIN WordPress
 <IfModule mod_rewrite.c>

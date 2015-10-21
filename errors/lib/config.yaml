@@ -26,16 +26,20 @@ routes:
   sent: .+thank-you
   form: .+contact
 codes:
+# Informational
+# Success
   200:
     response: OK
     reason: Standard response for successful HTTP requests, got it... OK,
     image: ok.png
     retry: 0;
+# Redirection
   307:
     response: Temporary Redirect
     reason: Temporarily redirected due to construction,
     image: temporary_redirect.png
     retry: 604800
+# 4xx Client Error
   401:
     response: Unauthorized
     reason: Authorization is required gain access,
@@ -114,6 +118,7 @@ codes:
     reason: The resource requested has been removed by request,
     image: keep-calm-and-don-t-burn-books.png
     retry: 0
+# 5xx Server Error
   500:
     response: Internal Server Error
     reason: Oops! Sorry about that if the problem persists,
@@ -164,6 +169,8 @@ codes:
     reason: Nobody really knows what happened here,
     image: unknown.png
     retry: 3600
+# [6xx - 9xx] TODO - ANAC Service Code Equivalents (Reserved -- TBD...)
+# 0xx - Double Digit Universals, eg: 86 - Removed From The Menu :: 21 - Blackjack You're a Winner OR Have A Drink! :: 18 - Barely Legal
   42:
     response: Don't Panic
     reason: Answer to The Ultimate Question of Life, the Universe, and Everything<br />Calculating precise details requires <a href="https://en.wikipedia.org/wiki/Phrases_from_The_Hitchhiker%27s_Guide_to_the_Galaxy#Answer_to_the_Ultimate_Question_of_Life.2C_the_Universe.2C_and_Everything_.2842.29" rel="nofollow">Deep Thought</a>,
@@ -174,11 +181,13 @@ codes:
     reason: Surprisingly simple idea,
     image: 69.jpg
     retry: 0
+# 00x - Very Reserved - The Unity of the One, or 8 is great since it's a binary triplet, think hard before committing...
   7:
     response: Licensed To Kill
     reason:  Licence to kill in the field, at agent's discretion, to complete the mission granted,
     image: licensed_to_kill.jpg
     retry: 0
+# Holiday Messages
   1000:
     response: New Year's Day
     reason:
@@ -242,6 +251,24 @@ codes:
   1012:
     response: Happy Halloween
     reason:
+    image:
+    retry: 0
+# Credits
+  1110:
+    response: Elegant Errors
+    reason: Because it's a mistake to excuse errors without class,
+    image: elegant.png
+    retry: 0
+# Contact
+  1120:
+    response: Contact Support
+    reason: Let us know what happenned, we will look into it,
+    image:
+    retry: 0
+# Sent
+  1130:
+    response: Thank You
+    reason: Your message has been sent and will be reviewed,
     image:
     retry: 0
 version: 0.3.3

@@ -38,6 +38,8 @@ ini_set('session.auto_start','On');
 
 require_once(_LIB.'debug.inc.php');
 
+apache_setenv('EE_DIR', _BASE."/");
+
 $elegance = new ElegantErrors();
 
 /**
@@ -104,7 +106,7 @@ class ElegantErrors {
 
 		// Checks msg.php?c=XXX for numerical status code of 1 to 3 digits
 		if (isset($_GET['c']) && preg_match('%\d{1,4}%',$_GET['c'])) {
-			$this->code = sprintf('%04d',$_GET['c']);
+			$this->code = (int) $_GET['c'];
 		}
 
 		// Checks msg.php?c=xxxurl=www.example.com for 3xx and redirect
@@ -172,35 +174,35 @@ class ElegantErrors {
 	 * Creates $this->status object with response, reason, image and retry values
 	 */
 	protected function setStatus() {
-		$code = (int) $this->code;
+		$code = $this->code;
 		// Check if key exists and return status from YAML $codes[] as object
 		if (is_object($this->config->codes->$code)) {
 			$this->status = $this->config->codes->$code;
 		} else {
-			$this->code = '520';  // Since the key does not exist, 520 - Unknown Reason
+			$this->code = 520;  // Since the key does not exist, 520 - Unknown Reason
 			$this->status = $this->config->codes->$code;
 		}
 		switch (true) {
-			case (int)$this->code < 100:
+			case $this->code < 100:
 				$this->status->color = 'darkviolet';
 				break;
-			case (int)$this->code < 200:
+			case $this->code < 200:
 				$this->status->color = 'silver';
 				break;
-			case (int)$this->code < 300:
+			case $this->code < 300:
 				$this->status->color = 'yellowgreen';
 				break;
-			case (int)$this->code < 400:
+			case $this->code < 400:
 				$this->status->color = "yellow";
 				break;
-			case (int)$this->code < 500:
+			case $this->code < 500:
 				$this->status->color = 'black';
 				break;
-			case (int)$this->code < 600:
+			case $this->code < 600:
 				$this->status->color = 'red';
 				break;
 			// TODO - Add more colors for the Alerts based on the service codes...
-			case (int)$this->code > 999:
+			case $this->code > 999:
 				$this->status->code = 'hotpink';
 				break;
 			default:
@@ -296,8 +298,9 @@ class ElegantErrors {
 		// Make certain $smarty is initialized before we compile, if not throw error and abort!
 		if (!isset($smarty)) trigger_error('Failed to load '._SMARTY.'/smarty.inc.php in '.__FUNCTION__, E_ERROR);
 
+		($this->code > 600 || $this->code < 100) ? $code = '' :  $code = $this->code." ";
 		if (!isset($this->config->title) || empty($this->config->title)) {
-			$this->config->title = $this->code." ".$this->status->response." - ".preg_replace('%,$%','',$this->status->reason)." : ".__CLASS__;
+			$this->config->title = $code.$this->status->response." - ".preg_replace('%,$%','',$this->status->reason)." : ".__CLASS__;
 		}
 
 		// Set the META Description if not exists...
