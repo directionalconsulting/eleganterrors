@@ -9,12 +9,9 @@
                     src="<!--[$base]-->/assets/img/html5.png" alt="Valid  HTML5 with SVG 1.1, MathML 3.0, RDFa 1.1, and ITS 2.0 support."></a>
     </div>
     <div id="centerfoot">
-        <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0-standalone.html" title="GNU GPLv3 License"><img src="<!--[$base]-->/assets/img/gplv3.png" alt="GPLv3"/></a>
-	    <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0-standalone.html" title="GNU GPLv3 License"><img src="<!--[$base]-->/assets/img/apache.png" alt="Apache"/></a>
-	    <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0-standalone.html" title="GNU GPLv3 License"><img src="<!--[$base]-->/assets/img/php.png" alt="PHP"/></a>
-	    <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0-standalone.html" title="GNU GPLv3 License"><img src="<!--[$base]-->/assets/img/javascript.png" alt="GPLv3"/></a>
-	    <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0-standalone.html" title="GNU GPLv3 License"><img src="<!--[$base]-->/assets/img/json.png" alt="JSON"/></a>
-	    <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0-standalone.html" title="GNU GPLv3 License"><img src="<!--[$base]-->/assets/img/yaml.png" alt="YAML"/></a>
+        <!--[foreach from=$logos item=tag]-->
+        <a rel="nofollow" href="<!--[$tag.link]-->" title="<!--[$tag.title|replace:'_':' ']-->"><img src="<!--[$base]-->/assets/img/<!--[$tag.image]-->" alt="<!--[$tag.title]-->" /></a>
+        <!--[/foreach]-->
     </div>
     <div id="rightfoot">
         <a href="http://jigsaw.w3.org/css-validator/validator?uri=http://<!--[$host]--><!--[$base]-->/<!--[$code]-->">

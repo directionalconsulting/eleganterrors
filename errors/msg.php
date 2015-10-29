@@ -28,7 +28,7 @@
 // Define global constants used for Smarty templates and loading of templates...
 // @TODO - Eventually replace this system with clean autoloading classes and modules ;)
 define ('_DOMAIN', $_SERVER['HTTP_HOST']);
-define ('_DEBUG', true);
+define ('_DEBUG', false);
 define ('_ROOT', dirname(__DIR__));
 define ('_BASE', basename(__DIR__));
 define ('_SMARTY', _ROOT."/"._BASE."/lib/Smarty/");
@@ -337,6 +337,7 @@ class ElegantErrors {
 //		$smarty->assign('keywords',$this->keywords);
 		$smarty->assign('rightcol',$this->objectToArray($this->config->credits->right));
 		$smarty->assign('leftcol',$this->objectToArray($this->config->credits->left));
+		$smarty->assign('logos',$this->objectToArray($this->config->credits->logos));
 		$smarty->assign('host', $_SERVER['HTTP_HOST']);
 		$smarty->assign('base', $this->base);
 		$smarty->assign('sitename', _SITENAME);

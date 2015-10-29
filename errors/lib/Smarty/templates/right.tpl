@@ -1,13 +1,14 @@
 <ul>
-<!--[foreach from=$rightcol key=cat item=group]-->
-	<!--[if $group|is_array]-->
-		<ul>
-			<!--[foreach from=$group key=title item=url]-->
-				<li><a href="<!--[$url]-->"><!--[$title|str_replace:'_':' '|ucwords]--></a></li>
-			<!--[/foreach]-->
-		</ul>
-	<!--[else]-->
-		<li><a href="<!--[$group]-->"><!--[$cat|str_replace:'_':' '|ucwords]--></a></li>
+	<!--[foreach from=$rightcol key=cat item=group]-->
+		<!--[if $group|is_string]-->
+			<li class="category"><!--[$cat|replace:'_':' ']--></li>
 		<!--[/if]-->
-<!--[/foreach]-->
+		<!--[if $group|is_array]-->
+			<ul>
+				<!--[foreach from=$group key=title item=url]-->
+					<li class="group"><a href="<!--[$url]-->"><!--[$title|replace:'_':' ']--></a></li>
+				<!--[/foreach]-->
+			</ul>
+		<!--[/if]-->
+	<!--[/foreach]-->
 </ul>

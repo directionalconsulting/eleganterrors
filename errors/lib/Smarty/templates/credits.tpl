@@ -3,15 +3,18 @@
 <!--[include file="header.tpl"]-->
 <body>
 		<div id="canvas">
+
 			<div id="page">
-				<div id="leftpanel">
-					<!--[include file="left.tpl"]-->
-				</div>
-				<div id="rightpanel">
-					<!--[include file="right.tpl"]-->
-				</div>
-				<div id="content">';
-					<!--[include file="alert.tpl"]-->
+				<div id="content">
+					<div id="leftcol">
+						<!--[include file="left.tpl"]-->
+					</div>
+					<div id="rightcol">
+						<!--[include file="right.tpl"]-->
+					</div>
+					<div>
+						<!--[include file="alert.tpl"]-->
+					</div>
 					<div class="row">
 						<div id="response">
 							<div class="main-icon text-warning"><span class="uxicon uxicon-alert"></span></div>

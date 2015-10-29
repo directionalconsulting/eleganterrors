@@ -29,7 +29,7 @@ body {
 }
 
 #centerfoot {
-    width: 50%;
+    width: 60%;
 }
 
 #leftfoot, #centerfoot, #rightfoot {
@@ -43,7 +43,7 @@ body {
 
 #leftfoot img, #rightfoot img, #centerfoot img {
     width: auto;
-    height: 36px;
+    height: 32px;
     margin: 0px;
     padding: 0px;
 }
@@ -95,6 +95,46 @@ a.contact:link, a.contact:visited {
 
 a.credits:link, a.credits:visited {
     color: tomato !important;
+}
+
+#rightcol, #leftcol {
+    margin: 1em;
+    padding: .25em;
+}
+
+#rightcol ul, #leftcol ul {
+    text-align: left;
+    text-decoration: none;
+    list-style: none
+    text-indent: 5%;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    font-variant: small-caps;
+    display: inline-table;
+    margin: .5em;
+    padding: .25em;
+}
+
+#rightcol ul li, #leftcol ul li {
+    list-style: square;
+    font-size: 1.5em;
+    line-height: 1.25em;
+    color: firebrick;
+}
+
+#leftcol ul li.group, #rightcol ul li.group {
+    list-style: circle;
+    font-size: 1.125em;
+}
+
+#leftcol {
+    float: left;
+    width: 15%;
+}
+
+#rightcol {
+    float: right;
+    width: 15%;
 }
 
 #rightpanel {
