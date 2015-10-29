@@ -44,7 +44,7 @@ See the GNU General Public License found in LICENSE.txt for more details.
     + [Rewrite Flags](https://httpd.apache.org/docs/2.4/rewrite/flags.html)    
   + [Aliases & Redirects](https://httpd.apache.org/docs/2.2/mod/mod_alias.html)
 
-### @TODO's
+### @TODOs
 
 Features TBD, got notes, just need time...
 

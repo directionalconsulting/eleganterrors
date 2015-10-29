@@ -28,19 +28,23 @@
 // Define global constants used for Smarty templates and loading of templates...
 // @TODO - Eventually replace this system with clean autoloading classes and modules ;)
 define ('_DOMAIN', $_SERVER['HTTP_HOST']);
-define ('_DEBUG', false);
+define ('_DEBUG', true);
 define ('_ROOT', dirname(__DIR__));
 define ('_BASE', basename(__DIR__));
 define ('_SMARTY', _ROOT."/"._BASE."/lib/Smarty/");
 define ('_LIB', "lib/");
 
-ini_set('session.auto_start','On');
+//ini_set('session.auto_start','On');
 
 require_once(_LIB.'debug.inc.php');
 
-apache_setenv('EE_DIR', _BASE."/");
+// Grab requirements for API
+require_once( _LIB . 'stopwatch.php' );
+
+//apache_setenv('EE_DIR', _BASE."/");
 
 $elegance = new ElegantErrors();
+
 
 /**
  * Class ElegantErrors
@@ -54,12 +58,12 @@ class ElegantErrors {
 	 * @see https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 	 *
 	 */
-	public $code = null;
+	public $code = 520;
 
 	/**
 	 * @var string URL location of Redirect for 3xx codes
 	 */
-	public $url = null;
+	public $url;
 
 	/**
 	 * @int Timeout in seconds for redirect when using 3xx codes
@@ -74,7 +78,9 @@ class ElegantErrors {
 	/**
 	 * @boolean yaml_ext - true / false (bool)
 	 */
-	public $yaml_ext;
+	private $yaml_ext = false;
+
+	private $config_file;
 
 	/**
 	 * @var $config array() of config.yaml values
@@ -82,19 +88,18 @@ class ElegantErrors {
 	 **/
 	public $config = null;
 
-	private $route = null;
+	private $route = 'errors';
 
-	public $timestamp, $base, $remoteip, $useragent, $referrer, $redirect, $script, $request = null;
+	private $env = null;
 
-	public $tryagain, $success, $stopwatch = false;
+	public $tryagain, $success = false;
+
+	public $stopwatch = null;
 
 	/**
 	 * Construct for class automatically instantiated when a new class instance is created, done one-shot!
 	 **/
 	function __construct() {
-
-		// Grab requirements for API
-		require_once( _LIB . 'stopwatch.php' );
 
 		// Time it just to make sure it's not being abused or hanging
 		$this->stopwatch = new stopwatch;
@@ -104,23 +109,17 @@ class ElegantErrors {
 		// Parse config.yaml and preload all status codes, etc...
 		$this->loadConfig();
 
-		// Checks msg.php?c=XXX for numerical status code of 1 to 3 digits
-		if (isset($_GET['c']) && preg_match('%\d{1,4}%',$_GET['c'])) {
-			$this->code = (int) $_GET['c'];
-		}
+		// Get & Set $_SESSION variables for better error reporting...
+		$this->withClass();
 
-		// Checks msg.php?c=xxxurl=www.example.com for 3xx and redirect
-		if (isset($_GET['url']) && preg_match('%3\d{2,}%',$this->code)) {
-			$this->url = $_GET['url'];
-		} else {
-			$this->url = null;
-		}
-
-		// Get REQUEST_URI and find a route from config.yaml...
+		// Find a route from config file...
 		$this->getRoute();
 
 		// Set the XXX code, response, image and reason for the found $this->code
 		$this->setStatus();
+
+		// Set the META tag info for the document
+		$this->setMeta();
 
 		// Send the HTTP 1.1/XXX Response
 		$this->sendHeaders();
@@ -135,39 +134,71 @@ class ElegantErrors {
 	 * Loads Config File using YAML extension
 	 */
 	protected function loadConfig() {
-		// @TODO - Add yaml.so check or PECL YAML local file path include function before next lines of code...
-		// return $data as array from lib/config.yaml
-		$yaml = file_get_contents(_LIB.'config.yaml');
+		// Check if yaml.so is present and use it if possible...
 		if ( extension_loaded ( 'yaml' )) {
-			// use YAML extension from PHP ini as detected above
-			$this->yaml_found = true;
+			$this->yaml_ext = true;
+			$this->config_file = _ROOT.'/'._BASE.'/'._LIB . "config.yaml";
+			$yaml = file_get_contents( $this->config_file );
+			$data = yaml_parse( $yaml, 0 );
+		// Load the config.xml file since yaml.so is not available...
 		} else {
-			// load YAML PECL from lib locally
-			require_once('');
-			$this->yaml_found = false;
-		};
-		// Load YAML file as array and then convert to object for use by app...
-		$data  = yaml_parse( $yaml, 0 );
+			$this->yaml_ext = false;
+			$this->config_file = _ROOT.'/'._BASE.'/'._LIB . "config.json";
+			$contents = file_get_contents( $this->config_file );
+			$data = $this->jsonToArray($contents);
+		}
+		// Convert the $data array to a $config object...
 		$this->config = $this->arrayToObject($data);
 
-		// Define _SITENAME used in templates, optionally set it in config file
-		(isset($this->config->sitename) && !empty($this->config->sitename)) ?
-			define("_SITENAME", $this->config->sitename) : define("_SITENAME", $_SERVER['HTTP_HOST']);
+		// Update and save the config.xml with latest config.yaml settings from development...
+		if ($this->config->global->saveJSON == 1) {
+			$this->arrayToJSON($data, _LIB.'config.json');
+		}
 	}
 
 	protected function getRoute() {
-		// @TODO - Implemented 2015-10-19 00:09:32, testing in-process...
-		$request = $_SERVER['REQUEST_URI'];
+
+		// Check the $_SERVER[REQUEST_URI] for a matching $_GET pattern for clean SEO URLs...
+		preg_match_all('%/([a-z0-9\-\._+:]{1,})%',$this->env->request,$matches);
+
+		if (!isset($_GET['c']) && isset($matches[1]) && is_array($matches[1]) && !empty($matches[1]))
+		{
+			$found = $matches[1];
+			$i = 0;
+			foreach ($found as $match) {
+				if (preg_match('%'._BASE.'%',$match) && $i == 0) {
+				}
+				if (preg_match('%\d{1,4}%',$match) && $i == 1) {
+					$this->code = (int) $match;
+				}
+				if (preg_match('%[a-z0-9\-+_\./]{1,}%i',$match) && $i == 2) {
+					if (preg_match('%^.*?\.\w{2,4}%i',$match)) {
+						$this->url = 'http://'.$match;
+					} else {
+						$this->url = 'http://'.$_SERVER['HTTP_HOST']."/".$match;
+					}
+				}
+				$i++;
+			}
+		} else {
+			// Set the code if an integer is found...
+			if ( isset( $_GET['c'] ) && preg_match( '%\d{1,4}%', $_GET['c'] ) ) {
+				$this->code = (int) $_GET['c'];
+			}
+
+			// Set the Redirect URL for 3xx codes...
+			if ( isset( $_GET['r'] ) && preg_match( '%3\d{2,}%', $this->code ) ) {
+				$this->url = $_GET['r'];
+			}
+		}
+
 		$routes = $this->objectToArray($this->config->routes);
 		// Search the routes for a matching regex URL pattern to return a template...
 		foreach ($routes as $template => $path) {
-			if (preg_match("%{$path}%",$request)) {
+			if (preg_match("%.+".$path."%i",$this->env->request)) {
 				$this->route = $template;
 			}
 		}
-		// Default to 520 Unknown if everything fails, since nobody knows...
-		if (empty($this->route))
-			$this->route = 'errors';
 	}
 
 	/**
@@ -222,16 +253,21 @@ class ElegantErrors {
 			$protocol = "HTTP/1.1";
 		}
 
-		// @TODO --> else send 407 somewhere with proper HTTP/1.1: 407 Response, but where/how... ???
-		if (!in_array((int)$this->code,array(407))) {
+		$hostname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 
-			// Quick safety check before accidentally sending humorous HTTP header causing actual error...
-			if ((int) $this->code < 599 && (int) $this->code > 99) {
-				header( "$protocol {$this->code} {$this->status->response}", true, $this->code );
+		if (!preg_match('%w3%i',$hostname) && !preg_match('%validator%',$hostname)) {
 
-				// Send Retry-After if not empty...
-				if (isset($this->status->retry) && !empty($this->status->retry)) {
-					header( "Retry-After: " . $this->status->retry );
+			// @TODO --> else send 407 somewhere with proper HTTP/1.1: 407 Response, but where/how... ???
+			if ( ! in_array( (int) $this->code, array( 407 ) ) ) {
+
+				// Quick safety check before accidentally sending humorous HTTP header causing actual error...
+				if ( (int) $this->code < 599 && (int) $this->code > 99 ) {
+					header( "$protocol {$this->code} {$this->status->response}", true, $this->code );
+
+					// Send Retry-After if not empty...
+					if ( isset( $this->status->retry ) && ! empty( $this->status->retry ) ) {
+						header( "Retry-After: " . $this->status->retry );
+					}
 				}
 			}
 		}
@@ -290,26 +326,18 @@ class ElegantErrors {
 
 	protected function renderView($template) {
 
-		$this->withClass();
-
 		// Load Smarty class using config file and create $smarty instance...
 		require_once( _SMARTY . "smarty.inc.php" );
 
 		// Make certain $smarty is initialized before we compile, if not throw error and abort!
 		if (!isset($smarty)) trigger_error('Failed to load '._SMARTY.'/smarty.inc.php in '.__FUNCTION__, E_ERROR);
 
-		($this->code > 600 || $this->code < 100) ? $code = '' :  $code = $this->code." ";
-		if (!isset($this->config->title) || empty($this->config->title)) {
-			$this->config->title = $code.$this->status->response." - ".preg_replace('%,$%','',$this->status->reason)." : ".__CLASS__;
-		}
-
-		// Set the META Description if not exists...
-		if (!is_object($this->config->meta->description) || empty($this->config->meta->description)) {
-			$this->config->meta->description = $this->config->title;
-		}
 //		$smarty->assign('description', $this->description);
 //		$smarty->assign('timestamp', $timestamp);
 //		$smarty->assign('keywords',$this->keywords);
+		$smarty->assign('rightcol',$this->objectToArray($this->config->credits->right));
+		$smarty->assign('leftcol',$this->objectToArray($this->config->credits->left));
+		$smarty->assign('host', $_SERVER['HTTP_HOST']);
 		$smarty->assign('base', $this->base);
 		$smarty->assign('sitename', _SITENAME);
 		$smarty->assign('url',$this->url);
@@ -322,26 +350,40 @@ class ElegantErrors {
 		return true;
 	}
 
-	protected function withClass() {
+	private function withClass() {
 		// @TODO - Add (?? PostreSQL / MySQL / InfluxDB / Mongo ??) for data tracking and health monitoring...
 
 		// Save all the posted values as XML for now...
 		$posted = $this->arrayToXML($_POST);
 
-		$remoteip = $_SERVER['REMOTE_ADDR'];
-		$useragent = $_SERVER['HTTP_USER_AGENT'];
-		$referrer  = $_SERVER['HTTP_REFERER'];
-		$request = $_SERVER['REQUEST_URI'];
-		$time = $_SERVER['REQUEST_TIME'];
-		$host = $_SERVER['HTTP_HOST'];
+		$this->env->addr = $_SERVER['REMOTE_ADDR'];
+		$this->env->agent = $_SERVER['HTTP_USER_AGENT'];
+		$this->env->referrer  = $_SERVER['HTTP_REFERER'];
+		$this->env->request = $_SERVER['REQUEST_URI'];
+		$this->env->time = $_SERVER['REQUEST_TIME'];
+		$this->env->host = $_SERVER['HTTP_HOST'];
 
-		$json = serialize(array($remoteip,$useragent,$referrer,$request,$time,$host));
-		if (!isset($_SESSION['withClass']) && empty($_SESSION['withClass'])) {
-			$this->config->json = $json;
-			$_SESSION['withClass'] = base64_encode($json);
-		} else {
-			$this->config->json = base64_decode($_SESSION['withClass']);
+		// Initialize and add to the history array of URLs visited before the crash...
+		$history = array();
+		if (isset($_SESSION['withClass']) && !empty($_SESSION['withClass'])) {
+			$json = base64_decode($_SESSION['withClass']);
+			$payload = unserialize($json);
+			$history = unserialize($payload['HISTORY']);
+			array_push($history,$this->env->referrer);
 		}
+		$json = serialize(
+			array(
+			'HTTP_STATUS'=>$this->code,
+			'REMOTE_ADDR'=>$this->env->addr,
+			'USER_AGENT'=>$this->env->agent,
+			'HISTORY'=>serialize($history),
+			'REQUEST_URI'=>$this->env->request,
+			'REQUEST_TIME'=>$this->env->time,
+			'HTTP_HOST'=>$this->env->host
+			)
+		);
+		$_SESSION['withClass'] = base64_encode($json);
+		$this->env->json = $json;
 	}
 
 	/**
@@ -364,13 +406,34 @@ class ElegantErrors {
 		return $obj;
 	}
 
-	private function arrayToXML($data = null) {
+	private function arrayToXML($data = null, $newfile = '', $root = 'root') {
 		if (empty($data)) {
 			return false;
 		}
-		$xml = new SimpleXMLElement('<root/>');
+		$xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" ?>'."<{$root}/>");
 		array_walk_recursive($data , array ($xml, 'addChild'));
-		return $xml->saveXML();  // content of $_POST array(s) are now an XML content that can used
+		$string = dom_import_simplexml($xml);
+		$domxml = new DOMDocument('1.0');
+		$domxml->preserveWhiteSpace = true;
+		$domxml->formatOutput = true;
+		$string = $domxml->importNode($string, true);
+		$string = $domxml->appendChild($string);
+		return $domxml->save($newfile);
+//		return $xml->saveXML($newfile);
+	}
+
+
+	private function arrayToJSON ($data = null, $newfile = null) {
+		if (empty($data)) return false;
+		$json = json_encode($data);
+		if (!empty($newfile)) {
+			file_put_contents($newfile, $json);
+		}
+		return $json;
+	}
+
+	private function jsonToArray ($contents) {
+		return json_decode($contents);
 	}
 
 	private function objectToArray($data = null) {
@@ -385,6 +448,40 @@ class ElegantErrors {
 			return $result;
 		}
 		return $data;
+	}
+
+
+	private function xmlToArray ( $xmlObject, $out = array () )
+	{
+		foreach ( (array) $xmlObject as $index => $node )
+			$out[$index] = ( is_object ( $node ) ) ? xml2array ( $node ) : $node;
+
+		return $out;
+	}
+
+	private function saveXML ($xml = null) {
+		if (empty($xml)) return false;
+
+	}
+
+	private function setMeta() {
+		// Define _SITENAME used in templates, optionally set it in config file
+		(isset($this->config->sitename) && !empty($this->config->sitename)) ?
+			define("_SITENAME", $this->config->sitename) : define("_SITENAME", $_SERVER['HTTP_HOST']);
+
+		($this->code > 600 || $this->code < 100) ? $code = '' :  $code = $this->code." ";
+		if (!isset($this->config->title) || empty($this->config->title)) {
+			$this->config->title = $code.$this->status->response." - ".preg_replace('%,$%','',$this->status->reason)." : ".__CLASS__;
+		}
+
+		// Set the META Description if not exists...
+		if (!is_object($this->config->meta->description) || empty($this->config->meta->description)) {
+			$this->config->meta->description = $this->config->title;
+		}
+
+		if (!is_object($this->config->meta->keywords) || empty($this->config->meta->keywords)) {
+			$this->config->meta->keywords = __CLASS__." :: ".$this->code." - ".$this->status->response;
+		}
 	}
 
 }

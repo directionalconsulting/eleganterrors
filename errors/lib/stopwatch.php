@@ -35,7 +35,7 @@ class stopwatch
     /**
      * Initialise stopwatch by starting it going
      */
-    function stopwatch()
+    function __construct()
     {
         $this->start();
         $this->lap_times = array();

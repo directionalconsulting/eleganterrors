@@ -1,50 +1,6 @@
-# Set our base environment variable for the /errors/msg.php?c= directive
+# Set our base environment variable for the /errors/msg.php?c=msg.php?c= directive
 <IfModule mod_env.c>
-	SetEnv EE_DIR /errors/
-</IfModule>
-
-# Override Error Handling and make it clear in logs and to visitors
-<IfModule mod_rewrite.c>
-	RewriteEngine On
-	RewriteBase /
-	RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^errors/(.*?)$ /errors/msg.php [L]
-	RewriteRule ^errors/lib/ - [F,L]
-	RewriteRule ^errors/contact$ /errors/msg.php?c=1120 [L]
-	RewriteRule ^errors/thank-you$ /errors/msg.php?c=1130 [L]
-	RewriteRule ^errors/credits$ /errors/msg.php?c=1110 [L]
-	RewriteCond %{ENV:REDIRECT_STATUS} =505
-	RewriteRule ^$ /errors/msg.php?c=505
-</IfModule>
-
-##
-# @TODO - FixMe :: NOT WORKING - not even certain if this is correct, comments please...
-# Redirect 3xx and Non-standard XXX codes class handler...
-<IfModule mod_alias.c>
-	Redirect 007 /errors/msg.php?c=007
-	Redirect 042 /errors/msg.php?c=042
-	Redirect 069 /errors/msg.php?c=069
-#	RedirectPermanent 301 /errors/msg.php?c=301
-#	RedirectTemp 302 /errors/msg.php?c=302
-#	Redirect 303 /errors/msg.php?c=303
-#	Redirect 304 /errors/msg.php?c=304
-#	Redirect 305 /errors/msg.php?c=305
-#	Redirect 306 /errors/msg.php?c=306
-#	RedirectTemp 307 /errors/msg.php?c=307
-	Redirect 418 /errors/msg.php?c=418
-	Redirect 420 /errors/msg.php?c=420
-	Redirect 431 /errors/msg.php?c=431
-	Redirect 449 /errors/msg.php?c=449
-	Redirect 451 /errors/msg.php?c=451
-	Redirect 511 /errors/msg.php?c=511
-</IfModule>
-
-<IfModule mod_dir.c>
-	# Default DirectoryIndex files
-	DirectoryIndex index.php index.shtml index.html
-	Order allow,deny
-	Allow from all
+	SetEnv EE_DIR /errors/msg.php?c=
 </IfModule>
 
 ##
@@ -89,6 +45,47 @@ ErrorDocument 507 /errors/msg.php?c=507
 ErrorDocument 506 /errors/msg.php?c=506
 ErrorDocument 508 /errors/msg.php?c=508
 #ErrorDocument 511 /errors/msg.php?c=511
+
+<IfModule mod_dir.c>
+	# Default DirectoryIndex files
+	DirectoryIndex index.php index.shtml index.html
+	Order allow,deny
+	Allow from all
+</IfModule>
+
+##
+# @TODO - FixMe :: NOT WORKING - not even certain if this is correct, comments please...
+# Redirect 3xx and Non-standard XXX codes class handler...
+<IfModule mod_alias.c>
+	Redirect 007 /errors/msg.php?c=007
+	Redirect 042 /errors/msg.php?c=042
+	Redirect 069 /errors/msg.php?c=069
+#	RedirectPermanent 301 /errors/msg.php?c=301
+#	RedirectTemp 302 /errors/msg.php?c=302
+#	Redirect 303 /errors/msg.php?c=303
+#	Redirect 304 /errors/msg.php?c=304
+#	Redirect 305 /errors/msg.php?c=305
+#	Redirect 306 /errors/msg.php?c=306
+#	RedirectTemp 307 /errors/msg.php?c=307
+	Redirect 418 /errors/msg.php?c=418
+	Redirect 420 /errors/msg.php?c=420
+	Redirect 431 /errors/msg.php?c=431
+	Redirect 449 /errors/msg.php?c=449
+	Redirect 451 /errors/msg.php?c=451
+	Redirect 511 /errors/msg.php?c=511
+</IfModule>
+
+# Override Error Handling and make it clear in logs and to visitors
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /
+	RewriteRule ^errors/lib/ - [F,L]
+	RewriteRule ^errors/contact$ /errors/msg.php?c=1120 [L]
+	RewriteRule ^errors/thank-you$ /errors/msg.php?c=1130 [L]
+	RewriteRule ^errors/credits$ /errors/msg.php?c=1110 [L]
+	RewriteCond %{ENV:REDIRECT_STATUS} =505
+	RewriteRule ^$ /errors/msg.php?c=505
+</IfModule>
 
 <IfModule mod_mime.c>
 
@@ -212,28 +209,22 @@ ErrorDocument 508 /errors/msg.php?c=508
 
 # PHP Options
 <IfModule mod_php5.c>
-	php_flag allow_url_include off
-	php_flag allow_url_fopen off
-	php_flag register_globals off
-	php_flag short_open_tag on
 	php_flag display_errors on
 	php_flag html_errors on
 	php_flag log_errors on
-	php_value error_log "errors/php_errors.log"
+	php_value error_log "php_errors.log"
 	php_flag ignore_repeated_errors on
 	php_flag ignore_repeated_source on
 #	php_value error_reporting "E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_STRICT"
 #	php_value error_reporting "E_WARNING & E_ERROR"
 	php_value error_reporting "E_ALL"
 	php_value memory_limit 256M
-	php_flag expose_php off
-	php_flag cgi.force_redirect on
-	php_flag session.auto_start off
-	php_flag session.use_trans_sid off
-	php_flag file_uploads on
 	php_value max_post_size 32M
+	# Permit big uploads of video files to be served locally
 	php_value upload_max_filesize 256M
+	php_flag short_open_tag on
+	php_flag allow_url_fopen off
 	php_value date.timezone "America/Los_Angeles"
-	php_flag yaml.decode_php on
+#	php_flag yaml.decode_php 1
 </IfModule>
 

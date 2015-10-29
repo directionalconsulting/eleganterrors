@@ -28,17 +28,28 @@ body {
     text-decoration: none;
 }
 
-#doormat {
+#centerfoot {
     width: 50%;
 }
 
-#leftshoe, #doormat, #rightshoe {
+#leftfoot, #centerfoot, #rightfoot {
     display: inline-block;
     clear: none;
-    margin: 1em 5%;
+    margin: 1em 15px;
     padding: .5em;
     text-align: center;
     vertical-align: middle;
+}
+
+#leftfoot img, #rightfoot img, #centerfoot img {
+    width: auto;
+    height: 36px;
+    margin: 0px;
+    padding: 0px;
+}
+
+#centerfoot img {
+    margin: 0px 5px;
 }
 
 /**

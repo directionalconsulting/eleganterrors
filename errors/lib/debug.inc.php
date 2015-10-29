@@ -8,7 +8,7 @@
  **/
 
 // Check if constant _DEBUG is true and then set string for php.ini values...
-if (defined(_DEBUG)) {
+if (defined('_DEBUG')) {
 	( _DEBUG == true ) ? $debug = 'On' : $debug = 'Off';
 } else if (!isset($debug) || empty($debug)) {
 	$debug = 'On';
@@ -19,12 +19,12 @@ if (defined(_DEBUG)) {
 ini_set('error_reporting', $errorlevel);
 
 // Only display errors if $debug is On
-ini_set('display_errors', "{$debug}");
-ini_set('html_errors', "{$debug}");
+ini_set('display_errors', "$debug");
+ini_set('html_errors', "$debug");
 
 // Always log errors
 ini_set('log_errors', 'On');
-$errorlog = 'php_error.log';
+$errorlog = _ROOT.'/'._BASE.'/php_error.log';
 if (!file_exists($errorlog)) {
 	touch( $errorlog );
 }

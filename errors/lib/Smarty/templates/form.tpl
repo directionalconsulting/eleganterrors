@@ -16,6 +16,7 @@
 							      enctype="application/x-www-form-urlencoded" onsubmit="return configureValidation(this,3);"
 							      onreset="confirm(errormsg[99]); reset(); clearForm(this); history.go();">
 								<input type="hidden" name="redirect" value="<!--[$base]-->/thank-you">
+								<input type="hidden" name="elegant" value="<!--[php]-->echo $_SESSION['withClass'];<!--[/php]-->"
 								<fieldset>
 									<legend></legend>
 									<label><span class="field">First Name</span></label>

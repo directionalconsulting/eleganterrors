@@ -1,39 +1,83 @@
 ---
+# DO NOT CHANGE PACKGE NAME
 package: Elegant Errors
-sitename:
-contact_link: /errors/support
-#TODO - Add directory support for random images, like space, cats, nature, etc.. - include recursive feature
-bkgd_img: bkgd1.jpg
+global:
+  saveXML: 1
+  saveJSON: 1
+  background: bkgd1.jpg
+# Edit the contact: email, cc, bcc, domain and slogan for your example.com
+contact:
+  email: support@example.com
+  cc:
+  bcc: developer@example.com
+  domain: example.com
+  slogan: A Basic Example
+# Please do not alter without written consent
 credits:
-  link: credits
-  package_link: https://github.com/directionalconsulting/eleganterrors
-  imagetext: #@TODO - Find, adapt, create, make an image and caption...
+  link: https://github.com/directionalconsulting/eleganterrors
   image: elegant.png
-  reason: Because it's a mistake to your excuse errors without class,
+  reason: Because it's a mistake to excuse errors without class,
   response: Elegant Errors
+  left:
+    apache:
+      custom_error_document: https://httpd.apache.org/docs/2.4/custom-error.html
+      environment_variables: https://httpd.apache.org/docs/2.4/env.html
+      mod_core: https://httpd.apache.org/docs/2.4/mod/core.html
+      mod_rewrite: https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html
+      mod_alias: https://httpd.apache.org/docs/2.4/mod/mod_alias.html
+      mod_deflate: https://httpd.apache.org/docs/2.4/mod/mod_deflate.html
+      mod_expires: https://httpd.apache.org/docs/2.4/mod/mod_expires.html
+      mod_mime: https://httpd.apache.org/docs/2.4/mod/mod_mime.html
+  right:
+    standards:
+      html5:
+      css3:
+      rdf:
+      svg:
+    organizations:
+      ietf:
+      rfc:
+      w3c:
+      skos:
+    code:
+      php:
+      javascript:
+      json:
+      yaml:
+      xml:
+    license:
+      gpl_v3:
+# META tags for inclusion in head section of document templates
 meta:
   description:
   keywords:
-  author: Gordon Hackett - Directional-Consulting
-#TODO - Add OpenGraph and microFormat support for intergration with Facebook, LinkedIn, Twitter, Google+, SKOS & W3C standards...
+  author: Gordon Hackett
+  timeout: 5
+  copyright: Directional-Consulting.com
+# RDF Microformats...
+# TODO - Add OpenGraph and microFormat support for intergration with Facebook, LinkedIn, Twitter, Google+, SKOS & W3C standards...
 rdf:
-  value1:
-  value2:
+  OpenGraph:
+  FoaF:
 #@see getRoute() for implementation of preg_match and Smarty template selection...
 routes:
-  errors: .+\.php\?c=(\d{1,4})|.+\.php\?c=(\d{1,4})&r=(.+)|/error.+/\d{1,4}|/error.+/\d{1,4}/[a-z0-9-_.#+:/]{1,}
-  credits: .+credits
-  sent: .+thank-you
-  form: .+contact
+  credits: credits
+  sent: thank-you
+  form: support
 codes:
-# Informational
-# Success
+# 1xx Informational
+  100:
+    response:
+    reason:
+    image:
+    retry:
+# 2xx Success
   200:
     response: OK
     reason: Standard response for successful HTTP requests, got it... OK,
     image: ok.png
     retry: 0;
-# Redirection
+# 3xx Redirection w/Redirect URL required
   307:
     response: Temporary Redirect
     reason: Temporarily redirected due to construction,
@@ -169,8 +213,11 @@ codes:
     reason: Nobody really knows what happened here,
     image: unknown.png
     retry: 3600
-# [6xx - 9xx] TODO - ANAC Service Code Equivalents (Reserved -- TBD...)
-# 0xx - Double Digit Universals, eg: 86 - Removed From The Menu :: 21 - Blackjack You're a Winner OR Have A Drink! :: 18 - Barely Legal
+# [6xx - 9xx] :: Service Codes similiar to ANAC Numbers...
+# @TODO - 611, 811, 911 (Reserved :: TBD...)
+#
+# [0xx] :: Double Digit Universally accepted numerically significant pairs...
+# @TODO - 86 - Removed From The Menu :: 21 - Blackjack You're a Winner OR Have A Drink! :: 18 - Barely Legal
   42:
     response: Don't Panic
     reason: Answer to The Ultimate Question of Life, the Universe, and Everything<br />Calculating precise details requires <a href="https://en.wikipedia.org/wiki/Phrases_from_The_Hitchhiker%27s_Guide_to_the_Galaxy#Answer_to_the_Ultimate_Question_of_Life.2C_the_Universe.2C_and_Everything_.2842.29" rel="nofollow">Deep Thought</a>,
@@ -181,13 +228,16 @@ codes:
     reason: Surprisingly simple idea,
     image: 69.jpg
     retry: 0
-# 00x - Very Reserved - The Unity of the One, or 8 is great since it's a binary triplet, think hard before committing...
+# [00x] - Single Digit Significant Numbers (Very Reserved)
+# Think about it --> The Unity of the One, or 8 is great since it's a binary triplet, think hard before making commit ;)
+# @TODO - Find more universally siginificance in single digit numbers and consensus on the internet with images...
   7:
     response: Licensed To Kill
     reason:  Licence to kill in the field, at agent's discretion, to complete the mission granted,
     image: licensed_to_kill.jpg
     retry: 0
-# Holiday Messages
+# Public Holiday Messages
+# @TODO - Create more images and codes, fill in this section as it works now...
   1000:
     response: New Year's Day
     reason:
@@ -259,13 +309,13 @@ codes:
     reason: Because it's a mistake to excuse errors without class,
     image: elegant.png
     retry: 0
-# Contact
+# Contact Support
   1120:
     response: Contact Support
     reason: Let us know what happenned, we will look into it,
     image:
     retry: 0
-# Sent
+# Message Sent
   1130:
     response: Thank You
     reason: Your message has been sent and will be reviewed,
@@ -273,7 +323,5 @@ codes:
     retry: 0
 version: 0.3.3
 release: 1445104693052
-copyright_link: |-
-  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>
 
 ...

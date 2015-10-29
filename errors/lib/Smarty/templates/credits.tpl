@@ -3,14 +3,15 @@
 <!--[include file="header.tpl"]-->
 <body>
 		<div id="canvas">
-			<div id="leftpanel">
-			</div>
-			<div id="rightpanel">
-			</div>
 			<div id="page">
+				<div id="leftpanel">
+					<!--[include file="left.tpl"]-->
+				</div>
+				<div id="rightpanel">
+					<!--[include file="right.tpl"]-->
+				</div>
 				<div id="content">';
 					<!--[include file="alert.tpl"]-->
-					<!--[include file="translate.tpl"]-->
 					<div class="row">
 						<div id="response">
 							<div class="main-icon text-warning"><span class="uxicon uxicon-alert"></span></div>
@@ -23,8 +24,9 @@
 							<p>
 								<!--[$config->credits->reason]--><br />
 								<!--[include file="url.tpl"]-->
-								<a href="<!--[$config->credits->package_link]-->" class="contact" title="Contact <!--[$config->package]-->">click here to learn more about <!--[$config->package]--></a>
+								<a href="<!--[$config->credits->link]-->" class="contact" title="Contact <!--[$config->package]-->">click here to learn more about <!--[$config->package]--></a>
 							</p>
+							<!--[include file="translate.tpl"]-->
 						</div>
 					</div>
 					<!--[include file="footer.tpl"]-->

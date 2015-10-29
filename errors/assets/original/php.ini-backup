@@ -1,0 +1,21 @@
+register_globals = off
+allow_url_fopen = off
+
+expose_php = On
+max_input_time = 300
+variables_order = "EGPCS"
+extension_dir = ./
+upload_tmp_dir = /tmp
+upload_max_filesize = 4000000
+precision = 12
+SMTP = postman1.hypersurf.com
+url_rewriter.tags = "a=href,area=href,frame=src,input=src,form=,fieldset="
+
+magic_quotes_gpc = Off
+magic_quotes_runtime = Off
+magic_quotes_sybase = Off
+session.auto_start = 0
+
+[Zend]
+zend_extension=/usr/local/zo/ZendExtensionManager.so
+zend_extension=/usr/local/zo/4_3/ZendOptimizer.so

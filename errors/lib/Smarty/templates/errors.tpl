@@ -8,9 +8,8 @@
 			<div id="rightpanel">
 			</div>
 			<div id="page">
-				<div id="content">';
+				<div id="content">
 					<!--[include file="alert.tpl"]-->
-					<!--[include file="translate.tpl"]-->
 					<div class="row">
 						<div id="response">
 							<div class="main-icon text-warning"><span class="uxicon uxicon-alert"></span></div>
@@ -22,8 +21,9 @@
 						<div id="reason">
 							<!--[include file="url.tpl"]-->
 							<p><!--[$status->reason]--><br />
-								<a href="<!--[$config->contact_link]-->" class="contact" title="Contact Us">please contact us.</a>
+								<a href="<!--[$config->routes->form]-->" class="contact" title="Contact Us">please contact us.</a>
 							</p>
+							<!--[include file="translate.tpl"]-->
 						</div>
 					</div>
 					<!--[include file="footer.tpl"]-->

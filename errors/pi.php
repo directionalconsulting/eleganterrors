@@ -7,3 +7,4 @@
  * Time: 11:48 PM
  */
 phpinfo();
+?>
