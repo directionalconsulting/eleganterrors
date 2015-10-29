@@ -46,10 +46,10 @@ credits:
   left:
     Internet:
       W3C: http://www.w3.org/
-      Validator: https://validator.w3.org/
+      W3_Validator: https://validator.w3.org/
       IETF: https://www.ietf.org
       RFC: https://www.ietf.org/rfc.html
-
+      HTTP_Status_Codes: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
     Apache_Server:
       HTAccess: http://httpd.apache.org/docs/current/howto/htaccess.html
       Custom_Error_Documents: https://httpd.apache.org/docs/2.4/custom-error.html
@@ -60,6 +60,10 @@ credits:
       mod_deflate: https://httpd.apache.org/docs/2.4/mod/mod_deflate.html
       mod_expires: https://httpd.apache.org/docs/2.4/mod/mod_expires.html
       mod_mime: https://httpd.apache.org/docs/2.4/mod/mod_mime.html
+    NginX_Server:
+      Error_Pages: https://www.nginx.com/resources/wiki/start/topics/examples/fullexample2/?highlight=error_page
+    Microsoft_IIS:
+      Custom_Error_Response: https://technet.microsoft.com/en-us/library/cc731570(v=ws.10).aspx
   right:
     Markup:
       HTML5: https://en.wikipedia.org/wiki/HTML5
@@ -71,11 +75,11 @@ credits:
       XML: https://en.wikipedia.org/wiki/XML
     Languages:
       PHP: http://php.net/
-#      MySQL:
+      Smarty: http://www.smarty.net/
+      MySQL: http://dev.mysql.com/
       JavaScript: https://en.wikipedia.org/wiki/JavaScript
       JQuery: https://jquery.com/
       json: http://www.json.org/
-      Smarty: http://www.smarty.net/
 # META tags for inclusion in head section of document templates
 meta:
   description:

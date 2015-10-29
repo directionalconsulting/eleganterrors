@@ -5,16 +5,16 @@
     </p>
     <!--[php]-->endif;<!--[/php]-->
     <div id="leftfoot">
-        <a href="http://validator.w3.org/check?uri=http://<!--[$host]--><!--[$base]-->/<!--[$code]-->"><img
+        <a href="http://validator.w3.org/check?uri=http://<!--[$host]--><!--[$base]-->/<!--[$code]-->" rel="nofollow" title="HTML Validator"><img
                     src="<!--[$base]-->/assets/img/html5.png" alt="Valid  HTML5 with SVG 1.1, MathML 3.0, RDFa 1.1, and ITS 2.0 support."></a>
     </div>
     <div id="centerfoot">
         <!--[foreach from=$logos item=tag]-->
-        <a rel="nofollow" href="<!--[$tag.link]-->" title="<!--[$tag.title|replace:'_':' ']-->"><img src="<!--[$base]-->/assets/img/<!--[$tag.image]-->" alt="<!--[$tag.title]-->" /></a>
+        <a <!--[if not $tag.title|strstr:'GitHub']-->rel="nofollow"<!--[/if]--> href="<!--[$tag.link]-->" title="<!--[$tag.title|replace:'_':' ']-->"><img src="<!--[$base]-->/assets/img/<!--[$tag.image]-->" alt="<!--[$tag.title]-->" /></a>
         <!--[/foreach]-->
     </div>
     <div id="rightfoot">
-        <a href="http://jigsaw.w3.org/css-validator/validator?uri=http://<!--[$host]--><!--[$base]-->/<!--[$code]-->">
+        <a href="http://jigsaw.w3.org/css-validator/validator?uri=http://<!--[$host]--><!--[$base]-->/<!--[$code]-->"  rel="nofollow" title="CSS Validator">
             <img src="<!--[$base]-->/assets/img/valid-css.png" alt="Valid CSS!" />
         </a>
     </div>

@@ -22,14 +22,6 @@ ini_set('error_reporting', $errorlevel);
 ini_set('display_errors', "$debug");
 ini_set('html_errors', "$debug");
 
-// Always log errors
-ini_set('log_errors', 'On');
-$errorlog = _ROOT.'/'._BASE.'/php_error.log';
-if (!file_exists($errorlog)) {
-	touch( $errorlog );
-}
-ini_set('error_log', $errorlog);
-
 // This is always true just for log legibility and cleanliness,,,
 ini_set('ignore_repeated_source', 'On');
 ini_set('ignore_repeated_errors', 'On');
