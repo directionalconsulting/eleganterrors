@@ -137,7 +137,36 @@ a.credits:link, a.credits:visited {
     width: 15%;
 }
 
-#rightpanel {
+#maincol {
+    text-align: center;
+    display: inline-block;
+    width: auto;
+    padding: 0;
+    margin: 1.5em;
+    line-height: 1.5em;
+}
+
+#translate {
+    height: auto;
+    margin: .25em;
+    text-align: center;
+}
+
+.package {
+    color: firebrick;
+    font-size: 1em;
+    margin: .5em;
+}
+.status_code {
+    color: black;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5em;
+}
+
+.rightpanel {
     /* thanks to http://blog.fakedarren.com/2010/01/cross-browser-css-gradients/ */
     /* fallback (Opera) */
     background: #FF9933;
@@ -145,13 +174,9 @@ a.credits:link, a.credits:visited {
     background: -moz-linear-gradient(left, #44484F, #FF9933);
     /* Chrome, Safari:*/
     background: -webkit-gradient(linear,left top, right top, from(#44484F), to(#FF9933));
-    display: block;
-    position: absolute;
-    z-index: 100;
-    top:0px;
 }
 
-#leftpanel {
+.leftpanel {
     /* thanks to http://blog.fakedarren.com/2010/01/cross-browser-css-gradients/ */
     /* fallback (Opera) */
     background: #FF9933;
@@ -159,10 +184,6 @@ a.credits:link, a.credits:visited {
     background: -moz-linear-gradient(left, #FF9933, #44484F);
     /* Chrome, Safari:*/
     background: -webkit-gradient(linear,left top, right top, from(#FF9933), to(#44484F));
-    display: block;
-    position: absolute;
-    z-index: 100;
-    top:0px;
 }
 
 #page {

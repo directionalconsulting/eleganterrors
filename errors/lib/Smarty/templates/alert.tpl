@@ -10,5 +10,4 @@
 		<!--[php]-->if (!preg_match('%credits%',$_SERVER['REQUEST_URI'])):<!--[/php]-->
 	</a>
 	<!--[php]-->endif;<!--[/php]-->
-
 </div>

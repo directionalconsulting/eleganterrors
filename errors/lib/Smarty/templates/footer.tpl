@@ -1,9 +1,5 @@
 <div id="footer">
-    <!--[php]-->if (!preg_match('%credits%',$_SERVER['REQUEST_URI'])):<!--[/php]-->
-    <p>
-        <a href="<!--[$config->routes->credits]-->" class="credits" title="Credits">Click here for additional information about this page</a>
-    </p>
-    <!--[php]-->endif;<!--[/php]-->
+
     <div id="leftfoot">
         <a href="http://validator.w3.org/check?uri=http://<!--[$host]--><!--[$base]-->/<!--[$code]-->" rel="nofollow" title="HTML Validator"><img
                     src="<!--[$base]-->/assets/img/html5.png" alt="Valid  HTML5 with SVG 1.1, MathML 3.0, RDFa 1.1, and ITS 2.0 support."></a>

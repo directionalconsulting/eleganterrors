@@ -1,3 +1,4 @@
+<div id="translate">
 <script type="text/javascript">
 <!--
 document.write(
@@ -12,3 +13,4 @@ document.write(
 '</span>')
 --> </script>
 <noscript></noscript>
+</div>
