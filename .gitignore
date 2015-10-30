@@ -10,6 +10,7 @@
 /bin/
 /composer.phar
 /phing.phar
+/node_modules
 composer.lock
 .idea
 .DS_Store
