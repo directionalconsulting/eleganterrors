@@ -28,9 +28,13 @@
 								<!--[include file="translate.tpl"]-->
 						</div>
 					</div>
+					<!--[if $status->credits eq false]-->
 				</div>
 				<!--[include file="footer.tpl"]-->
+				<!--[else]-->
+				<!--[include file="footer.tpl"]-->
 			</div>
+			<!--[/if]-->
 		</div>
 	</div>
 </body>

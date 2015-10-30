@@ -28,21 +28,24 @@ credits:
     - title: PHP Pre-Hypertext Pprocessor
       link: http://php.net/
       image: php.png
-    - title: JSON Javascript Object Notation
-      link: http://www.json.org/
-      image: json.png
-    - title: YAML
-      link: http://yaml.org
-      image: yaml.png
     - title: Smarty Template Engine
       link: http://www.smarty.net/
       image: smarty.png
-    - title: GitHub Social Coding
-      link: https://github.com/directionalconsulting/eleganterrors
-      image: github.png
     - title: JQuery
       link: https://jquery.com/
       image: JQuery.gif
+    - title: YAML
+      link: http://yaml.org
+      image: yaml.png
+    - title: LESS
+      link: http://lesscss.org/
+      image: sass-less.png
+    - title: JSON Javascript Object Notation
+      link: http://www.json.org/
+      image: json.png
+    - title: GitHub Social Coding
+      link: https://github.com/directionalconsulting/eleganterrors
+      image: github.png
   left:
     Internet:
       W3C: http://www.w3.org/
@@ -68,6 +71,7 @@ credits:
     Markup:
       HTML5: https://en.wikipedia.org/wiki/HTML5
       CSS3: https://en.wikipedia.org/wiki/Cascading_Style_Sheets#CSS_3
+      LESS: http://lesscss.org/
       RDF: http://www.w3.org/RDF/
       SKOS: https://en.wikipedia.org/wiki/Simple_Knowledge_Organization_System
       SVG: https://en.wikipedia.org/wiki/Scalable_Vector_Graphics

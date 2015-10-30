@@ -163,9 +163,13 @@ class ElegantErrors {
 
 		if (!isset($_GET['c']) && isset($matches[1]) && is_array($matches[1]) && !empty($matches[1]))
 		{
+			$this->status->credits = false;
 			$found = $matches[1];
 			$i = 0;
 			foreach ($found as $match) {
+				if (preg_match('%'.$this->config->routes->credits.'%',$match)) {
+					$this->status->credits = true;
+				}
 				if (preg_match('%'._BASE.'%',$match) && $i == 0) {
 				}
 				if (preg_match('%\d{1,4}%',$match) && $i == 1) {

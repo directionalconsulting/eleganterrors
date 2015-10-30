@@ -22,34 +22,41 @@ body {
 }
 
 #footer {
-    width: 100%;
+    clear: both;
     text-align: center;
-    vertical-align: text-top;
+    vertical-align: top;
     text-decoration: none;
+    margin: 0;
+    padding: .5em 0;
+    background-color: rgba(33,33,33,.3);
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
 }
 
-#centerfoot {
-    width: 60%;
-}
-
-#leftfoot, #centerfoot, #rightfoot {
+.center, .left, .right {
     display: inline-block;
     clear: none;
-    margin: 1em 15px;
-    padding: .5em;
     text-align: center;
     vertical-align: middle;
+    position: relative;
 }
 
-#leftfoot img, #rightfoot img, #centerfoot img {
+.center {
+    width: auto;
+}
+
+.left {
+    text-align: left;
+    width: 15%;
+}
+.right {
+    text-align: right;
+    width: 15%;
+}
+
+#footer img {
     width: auto;
     height: 32px;
-    margin: 0px;
-    padding: 0px;
-}
-
-#centerfoot img {
-    margin: 0px 5px;
 }
 
 /**
@@ -137,19 +144,55 @@ a.credits:link, a.credits:visited {
     width: 15%;
 }
 
+.zippo {
+    width: 0 !important;
+    display: none !important;
+}
+
 #maincol {
     text-align: center;
     display: inline-block;
-    width: auto;
+    width: 45%;
     padding: 0;
     margin: 1.5em;
     line-height: 1.5em;
 }
 
+#maincol h1, #maincol h3 {
+    line-height: 1em;
+    padding: 0;
+    margin: 0.25em;
+}
+
+#page {
+    padding:15px;
+    text-align: center;
+    margin: 0;
+    position: relative;
+}
+
+#content {
+    content: "";
+    top: 0;
+    left: 0;
+    width: 80%;
+    height: 90%;
+    border-radius: 15px;
+    border-style: double;
+    border-color: darkgrey;
+    border-width: thick;
+    margin: 10px auto;
+    display: block;
+    background-color: floralwhite;
+    background-size: cover;
+    opacity: 1.0;
+}
+
 #translate {
     height: auto;
-    margin: .25em;
+    margin: .5em 0;
     text-align: center;
+    padding: 0;
 }
 
 .package {
@@ -186,29 +229,6 @@ a.credits:link, a.credits:visited {
     background: -webkit-gradient(linear,left top, right top, from(#FF9933), to(#44484F));
 }
 
-#page {
-    padding:15px;
-    text-align: center;
-    margin: 0;
-    position: relative;
-}
-
-#content {
-    content: "";
-    top: 0;
-    left: 0;
-    width: 85%;
-    height: 90%;
-    border-radius: 15px;
-    border-style: double;
-    border-color: darkgrey;
-    border-width: thick;
-    margin: 10px auto;
-    display: block;
-    background-color: floralwhite;
-    background-size: cover;
-    opacity: 1.0;
-}
 
 .row:before, .row:after {
     display: table;

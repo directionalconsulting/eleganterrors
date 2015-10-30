@@ -5,9 +5,9 @@
 	<div id="canvas">
 		<div id="page">
 			<div id="content">
-				<div id="leftcol">
+				<div id="leftcol" class="zippo">
 				</div>
-				<div id="rightcol">
+				<div id="rightcol" class="zippo">
 				</div>
 				<div id="maincol">
 					<!--[include file="alert.tpl"]-->
@@ -28,8 +28,13 @@
 						<!--[include file="translate.tpl"]-->
 					</div>
 				</div>
+			<!--[if $status->credits eq false]-->
 			</div>
 			<!--[include file="footer.tpl"]-->
+			<!--[else]-->
+				<!--[include file="footer.tpl"]-->
+				</div>
+			<!--[/if]-->
 			</div>
 		</div>
 	</body>
