@@ -28,20 +28,49 @@
 // Define global constants used for Smarty templates and loading of templates...
 // @TODO - Eventually replace this system with clean autoloading classes and modules ;)
 define ('_DOMAIN', $_SERVER['HTTP_HOST']);
-define ('_DEBUG', false);
+define ('_DEBUG', true);
 define ('_ROOT', dirname(__DIR__));
 define ('_BASE', basename(__DIR__));
-define ('_SMARTY', _ROOT."/"._BASE."/lib/Smarty/");
-define ('_LIB', "lib/");
-
-//ini_set('session.auto_start','On');
+define ('_LIB', 'lib'.DIRECTORY_SEPARATOR);
+define ('_VENDOR', 'vendor'.DIRECTORY_SEPARATOR);
+define ('_SMARTY', 'lib'.DIRECTORY_SEPARATOR.'Smarty'.DIRECTORY_SEPARATOR);
 
 require_once(_LIB.'debug.inc.php');
 
-// Grab requirements for API
-require_once( _LIB . 'stopwatch.php' );
-
+//ini_set('session.auto_start','On');
 //apache_setenv('EE_DIR', _BASE."/");
+
+function primer() {
+	$libs = explode(PATH_SEPARATOR, get_include_path());
+	$dirs = array(_SMARTY,_VENDOR,_LIB);
+	$apis = array();
+	foreach ($dirs as $dir) {
+		$apis[] = _ROOT.DIRECTORY_SEPARATOR.$dir;
+	}
+	$paths = array();
+	$iter    = new RecursiveIteratorIterator(
+		new RecursiveDirectoryIterator( _ROOT, RecursiveDirectoryIterator::SKIP_DOTS ),
+		RecursiveIteratorIterator::SELF_FIRST,
+		RecursiveIteratorIterator::CATCH_GET_CHILD // Ignore "Permission denied"
+	);
+	foreach ( $iter as $path => $dir ) {
+		if ( $dir->isDir() ) {
+			// @TODO - Preg_Match_Callback to check if directory or subs are within libs
+			foreach ( $apis as $api) {
+				if ( preg_match( '%'.$api.'%', $path) ) {
+					$paths[] = $path;
+				}
+			}
+		}
+	}
+	$includes = array_merge($libs,$dirs,$paths);
+	$paths = implode(PATH_SEPARATOR,$includes);
+	set_include_path($paths);
+	spl_autoload_extensions('.php, .inc, .class.php');
+	spl_autoload_register();
+//	die(var_dump($paths));
+}
+primer();
 
 $elegance = new ElegantErrors();
 
@@ -137,13 +166,13 @@ class ElegantErrors {
 		// Check if yaml.so is present and use it if possible...
 		if ( extension_loaded ( 'yaml' )) {
 			$this->yaml_ext = true;
-			$this->config_file = _ROOT.'/'._BASE.'/'._LIB . "config.yaml";
+			$this->config_file = _LIB."config.yaml";
 			$yaml = file_get_contents( $this->config_file );
 			$data = yaml_parse( $yaml, 0 );
 		// Load the config.xml file since yaml.so is not available...
 		} else {
 			$this->yaml_ext = false;
-			$this->config_file = _ROOT.'/'._BASE.'/'._LIB . "config.json";
+			$this->config_file = _LIB."config.json";
 			$contents = file_get_contents( $this->config_file );
 			$data = $this->jsonToArray($contents);
 		}
@@ -330,15 +359,22 @@ class ElegantErrors {
 
 	protected function renderView($template) {
 
+		// Load and execute leafo/lessphp
+		require_once('lessc.inc.php');
+		$less = new lessc;
+		$less->checkedCompile('assets/css/package.less', 'assets/css/package.css');
+//		die(print_r($less));
+
 		// Load Smarty class using config file and create $smarty instance...
-		require_once( _SMARTY . "smarty.inc.php" );
+//		$smarty = new Smarty;
+//		if (_DEBUG) {
+//			$smarty->debugging = true;
+//		}
+		require_once( _SMARTY.'smarty.inc.php');
 
 		// Make certain $smarty is initialized before we compile, if not throw error and abort!
-		if (!isset($smarty)) trigger_error('Failed to load '._SMARTY.'/smarty.inc.php in '.__FUNCTION__, E_ERROR);
+		if (!isset($smarty)) trigger_error('Failed to load '._SMARTY.'smarty.inc.php in '.__FUNCTION__, E_ERROR);
 
-//		$smarty->assign('description', $this->description);
-//		$smarty->assign('timestamp', $timestamp);
-//		$smarty->assign('keywords',$this->keywords);
 		$smarty->assign('rightcol',$this->objectToArray($this->config->credits->right));
 		$smarty->assign('leftcol',$this->objectToArray($this->config->credits->left));
 		$smarty->assign('logos',$this->objectToArray($this->config->credits->logos));
