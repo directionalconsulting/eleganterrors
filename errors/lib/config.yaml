@@ -50,19 +50,19 @@ credits:
     Internet:
       W3C: http://www.w3.org/
       W3_Validator: https://validator.w3.org/
-      IETF: https://www.ietf.org
-      RFC: https://www.ietf.org/rfc.html
+      IETF_RFC: https://www.ietf.org/rfc.html
       HTTP_Status_Codes: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
     Apache_Server:
       HTAccess: http://httpd.apache.org/docs/current/howto/htaccess.html
       Custom_Error_Documents: https://httpd.apache.org/docs/2.4/custom-error.html
       Environment_Variables: https://httpd.apache.org/docs/2.4/env.html
-      mod_core: https://httpd.apache.org/docs/2.4/mod/core.html
+      Rewrite_Flags: https://httpd.apache.org/docs/2.4/rewrite/flags.html
       mod_rewrite: https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html
       mod_alias: https://httpd.apache.org/docs/2.4/mod/mod_alias.html
       mod_deflate: https://httpd.apache.org/docs/2.4/mod/mod_deflate.html
       mod_expires: https://httpd.apache.org/docs/2.4/mod/mod_expires.html
       mod_mime: https://httpd.apache.org/docs/2.4/mod/mod_mime.html
+      mod_core: https://httpd.apache.org/docs/2.4/mod/core.html
     NginX_Server:
       Error_Pages: https://www.nginx.com/resources/wiki/start/topics/examples/fullexample2/?highlight=error_page
     Microsoft_IIS:

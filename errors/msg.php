@@ -28,7 +28,7 @@
 // Define global constants used for Smarty templates and loading of templates...
 // @TODO - Eventually replace this system with clean autoloading classes and modules ;)
 define ('_DOMAIN', $_SERVER['HTTP_HOST']);
-define ('_DEBUG', true);
+define ('_DEBUG', false);
 define ('_ROOT', dirname(__DIR__));
 define ('_BASE', basename(__DIR__));
 define ('_LIB', 'lib'.DIRECTORY_SEPARATOR);
@@ -192,13 +192,9 @@ class ElegantErrors {
 
 		if (!isset($_GET['c']) && isset($matches[1]) && is_array($matches[1]) && !empty($matches[1]))
 		{
-			$this->status->credits = false;
 			$found = $matches[1];
 			$i = 0;
 			foreach ($found as $match) {
-				if (preg_match('%'.$this->config->routes->credits.'%',$match)) {
-					$this->status->credits = true;
-				}
 				if (preg_match('%'._BASE.'%',$match) && $i == 0) {
 				}
 				if (preg_match('%\d{1,4}%',$match) && $i == 1) {
@@ -228,10 +224,11 @@ class ElegantErrors {
 		$routes = $this->objectToArray($this->config->routes);
 		// Search the routes for a matching regex URL pattern to return a template...
 		foreach ($routes as $template => $path) {
-			if (preg_match("%.+".$path."%i",$this->env->request)) {
+			if (preg_match("%".$path."%",$this->env->request)) {
 				$this->route = $template;
 			}
 		}
+
 	}
 
 	/**
@@ -246,6 +243,7 @@ class ElegantErrors {
 			$this->code = 520;  // Since the key does not exist, 520 - Unknown Reason
 			$this->status = $this->config->codes->$code;
 		}
+		$this->status->credits = 0;
 		switch (true) {
 			case $this->code < 100:
 				$this->status->color = 'darkviolet';
@@ -271,6 +269,9 @@ class ElegantErrors {
 				break;
 			default:
 				$this->status->color = 'red';
+		}
+		if ((string)$this->route === (string)$this->config->routes->credits) {
+			$this->status->credits = 1;
 		}
 	}
 
@@ -363,14 +364,9 @@ class ElegantErrors {
 		require_once('lessc.inc.php');
 		$less = new lessc;
 		$less->checkedCompile('assets/css/package.less', 'assets/css/package.css');
-//		die(print_r($less));
 
-		// Load Smarty class using config file and create $smarty instance...
-//		$smarty = new Smarty;
-//		if (_DEBUG) {
-//			$smarty->debugging = true;
-//		}
-		require_once( _SMARTY.'smarty.inc.php');
+//		// Load Smarty class using config file and create $smarty instance...
+		require_once('smarty.inc.php');
 
 		// Make certain $smarty is initialized before we compile, if not throw error and abort!
 		if (!isset($smarty)) trigger_error('Failed to load '._SMARTY.'smarty.inc.php in '.__FUNCTION__, E_ERROR);
@@ -381,13 +377,15 @@ class ElegantErrors {
 		$smarty->assign('host', $_SERVER['HTTP_HOST']);
 		$smarty->assign('base', $this->base);
 		$smarty->assign('sitename', _SITENAME);
+		$smarty->assign('route',$this->route);
 		$smarty->assign('url',$this->url);
 		$smarty->assign('code',$this->code);
 		$smarty->assign('config',$this->config);
 		$smarty->assign('status',$this->status);
 		$smarty->assign('stopwatch', $this->stopwatch);
 
-		$smarty->display($template.'.tpl');
+//		$smarty->display($template.'.tpl');
+		$smarty->display('index.tpl');
 		return true;
 	}
 

@@ -6,13 +6,16 @@
 
 We've all seen the very blank and less than helpful standard *404 Page Not Found* or the occasional *500 Internal Server Error* when things really have gone wrong.
  
-Sometimes there's an email address, usually bogus, but it requires opening an email client, copying the address and pasting the URL, error code, writing a message along with preferably noting the time it occurred, hoping someday some action will be taken.
+Sometimes there's an email address, usually bogus, but it requires opening an email client to send the broken URL with server error code hoping someone takes action and fixes the problem.
   
-Elegant Errors aims to replace the standard dry, less than helpful, traditional error message response with beautifully stylized templates, humorous graphics and helpful messages including a self contained contact form with built-in captcha to eliminate network resource requirements.
+Elegant Errors replaces standard error pages using beautifully stylized templates, humorous graphics, helpful messages and a contact form with built-in captcha to eliminate network resource requirements.
 
-The secure contact form captures the referrer URL, date & time, error code, server and environment info along with any user information the client optionally chooses to include when submitting the form to be sent to the addresses provided in the form config section of the YAML file.
+The contact form captures the server environment including referrer URL and any user information the client optionally chooses to include when submitting the form.  The form is securely mailed using PHP and captcha to eliminate spam to the addresses of your choice easily changed in the config file. 
 
 __>> Website maintainers <u>please change the contact email</u> in the config.yaml file__
+
+<span style="font-size:75%;"> __PRODUCTION SERVERS:__ Generate __config.json__ prior to uploading with [PECL YAML](http://php.net/manual/en/book.yaml.php), DO NOT manually edit the file.</span>
+
 
 ## Installation
 
@@ -32,6 +35,7 @@ Removal instructions are documented if required by a plugin or vendor requiremen
 See the GNU General Public License found in LICENSE.txt for more details.  
   
 ### References
+For the complete list of references, please visit the __/errors/credits__ page within the application.
 + [HTTP Status Codes](https://en.wikipedia.org/wiki/Public_holidays_in_the_United_States)
 + [Public Holidays USA](https://en.wikipedia.org/wiki/Public_holidays_in_the_United_States)
 + [IETF RFC](https://www.ietf.org/rfc.html)
@@ -55,7 +59,7 @@ Features TBD, got notes, just need time...
 + Redirect Countdown - *JS countdown timeout for redirection of URL with 3xx codes*
 + Logging - *$_SESSION history of URLs visited preceeding the status code response page*
 + Database - *abstraction layer for MySQL, PostgreSQL, MongoDB, InfluxDB, sqlite3, etc...*
-+ Dashboard - *view logs patterns of status codes by URL plus change config options*
++ Dashboard - *view logs, status codes and history patterns by URL plus change config options*
 + Tests - *PHPUnit, Mess Detector and Code Coverage for classes, modules, routes, configs, etc...*
 + Packaging - *Composer vendor library with all assets required for inclusion in composer.json file*
 

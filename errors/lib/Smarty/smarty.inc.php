@@ -1,6 +1,6 @@
 <?php
 // Load our Smarty library using our predefined location...
-require_once(_SMARTY.'Smarty.class.php');
+require_once('Smarty.class.php');
 
 $smarty = new Smarty;
 if (_DEBUG) {
