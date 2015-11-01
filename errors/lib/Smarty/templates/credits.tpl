@@ -8,7 +8,7 @@
 	<div id="reason">
 		<!--[include file="url.tpl"]-->
 		<!--[$config->credits->reason]--><br />
-		<a href="<!--[$config->credits->link]-->" class="contact" title="Contact <!--[$config->package]-->">click here to learn more about <!--[$config->package]--></a>
+		<a href="<!--[$config->credits->link]-->" class="contact" title="Contact <!--[$config->package]-->">Learn more about <!--[$config->package]--></a>
 		<!--[include file="package.tpl"]-->
 		<!--[include file="translate.tpl"]-->
 	</div>

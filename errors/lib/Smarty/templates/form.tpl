@@ -1,67 +1,83 @@
-<!DOCTYPE html>
-<html>
-<!--[include file="header.tpl"]-->
-	<body>
-		<div id="canvas">
-			<div id="leftpanel">
-			</div>
-			<div id="rightpanel">
-			</div>
-			<div id="page">
-				<div id="content">';
-					<!--[include file="alert.tpl"]-->
-					<div class="row">
-						<div id="reason">'
-							<form action="<!--[$base]-->/contact" method="post" id="contactus" name="contactus"
-							      enctype="application/x-www-form-urlencoded" onsubmit="return configureValidation(this,3);"
-							      onreset="confirm(errormsg[99]); reset(); clearForm(this); history.go();">
-								<input type="hidden" name="redirect" value="<!--[$base]-->/thank-you">
-								<input type="hidden" name="elegant" value="<!--[php]-->echo $_SESSION['withClass'];<!--[/php]-->"
-								<fieldset>
-									<legend></legend>
-									<label><span class="field">First Name</span></label>
-									<input type="text" tabindex="0" name="first" id="first_name" value="<!--[$first]-->">
-									<label><span class="field">Last Name</span></label>
-									<input type="text" tabindex="1" name="last" id="last_name" value="<!--[$last]-->">
-								</fieldset>
-								<fieldset>
-									<legend></legend>
-									<label><span class="field">Email</span></label>
-									<input type="text" tabindex="2" name="email" id="email" value="<!--[$email]-->">
-								</fieldset>
-								<fieldset>
-									<legend></legend>
-									<label><span class="field">Message</span></label>
-									<textarea name="inquiry" tabindex="3" id="message" rows="8" cols="110"><!--[$message]--></textarea>
-								</fieldset>
-								<fieldset>
-									<legend></legend>
-									<label id="quit">
-										<input type="image" tabindex="6"  name="cancel" id="cancel" src="<!--[$base]-->/assets/img/error.png">
-									</label>
-									<label id="key">
-										Enter Verification Code
-										<img src="<!--[$base]-->/lib/secureword.php?<!--[php]-->echo session_name()<!--[/php]-->=<!--[php]--> echo session_id()<!--[/php]-->"
-										     alt="Enter text shown to contact <!--[$sitename]-->"
-										     title="Enter text shown to contact <!--[$sitename]-->" class="veriword">
-										<input type="text" tabindex="4" name="keystring" id="keycode" title="Verification Code">
-									</label>
-									<label id="send">
-										<input type="image" tabindex="5" name="submit" id="submit" src="<!--[$base]-->/assets/img/send.png">
-									</label>
-								</fieldset>
-							</form>
-							<br>
-							<div id="errordiv">&nbsp;</div>
-							<!--[if $tryagain eq 1]-->
-							<br>
-							<p class="keys">Code entered does not match, try again.</p>
-							<!--[/if]-->
-						</div>
-					</div>
-					<!--[include file="footer.tpl"]-->
-				</div>
-			</div>
-		</div>
-	</body>
-</html>
+<div class="row">
+	<div id="reason">
+		<form method="post"
+		      enctype="application/x-www-form-urlencoded"
+		      action="<!--[$base]-->/contact"
+		      method="post"
+		      onsubmit="return configureValidation(this,3);"
+		      onreset="confirm(errormsg[99]); reset(); clearForm(this); history.go();">
+			<input type="hidden" name="redirect" value="<!--[$base]-->/thank-you">
+			<input type="hidden" name="elegant" value="<!--[$smarty.session.withClass]-->"
+			<p>
+			<fieldset>
+				<legend for="problem">Was This The Problem ?</legend>
+				<p>
+					<label>Accept <!--[$config->package]--> report?
+						<input type="checkbox" id="yes" name="yes">
+					</label>
+				</p>
+				<p>
+					<label>Server Error
+						<textarea id="problem" name="problem" placeholder="<!--[$status->code]-->"></textarea>
+					</label>
+				</p>
+			</fieldset>
+			<fieldset>
+					<legend>How Can We Help ?</legend>
+					<p>
+						<label for="message"><span class="field">Message</span>
+							<textarea id="message" name="message"><!--[$message]--></textarea>
+						</label>
+					</p>
+			</fieldset>
+
+			<fieldset>
+				<legend>May We Contact You ?</legend>
+				<p>
+					<label for="name">Name
+						<input type="text" id="name" name="name" placeholder="Your Name" />
+					</label>
+				</p>
+
+				<p>
+					<label for="email">Email
+						<input type="email" id="email" name="email" placeholder="you@mailhost.tld" />
+					</label>
+				</p>
+			</fieldset>
+
+			<fieldset>
+				<legend>Prove you're not a robot !</legend>
+				<p>
+					<label for="keycode">
+						<img src="<!--[$status->captcha]-->" />
+						<input type="text" tabindex="4" name="keystring" id="keycode" placeholder="Enter Verification Code">
+					</label>
+				</p>
+			</fieldset>
+
+			<fieldset>
+				<legend>Submit or Quit ?</legend>
+				<p>
+					<label for="submit">Submit
+						<input type="image" tabindex="5" name="submit" id="submit" src="<!--[$base]-->/assets/img/send.png">
+					</label>
+				</p>
+				<p>
+					<label for="cancel">Cancel
+						<input type="image" tabindex="6"  name="cancel" id="cancel" src="<!--[$base]-->/assets/img/error.png">
+					</label>
+				</p>
+
+			</fieldset>
+
+			</p>
+		</form>
+		<br>
+		<div id="errordiv">&nbsp;</div>
+		<!--[if $tryagain eq 1]-->
+			<br>
+			<p class="keys">Code entered does not match, try again.</p>
+		<!--[/if]-->
+	</div>
+</div>

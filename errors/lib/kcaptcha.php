@@ -1,28 +1,50 @@
 <?php
-# KCAPTCHA PROJECT VERSION 1.2.4
+class ElegantCaptcha {
 
-# Automatic test to tell computers and humans apart
-
-# Copyright by Kruglov Sergei, 2006
-# www.captcha.ru, www.kruglov.ru
-
-# System requirements: PHP 4.0.6+ w/ GD
-
-# KCAPTCHA is a free software. You can freely use it for building own site or software.
-# If you use this software as a part of own sofware, you must leave copyright notices intact or add KCAPTCHA copyright notices to own.
-# As a default configuration, KCAPTCHA has a small credits text at bottom of CAPTCHA image.
-# You can remove it, but I would be pleased if you left it. ;)
-
-# See kcaptcha_config.php for customizing
-
-class KCAPTCHA{
+    public $image;
 
     // generates keystring and image
-    function KCAPTCHA(){
+    function __construct() {
 
-        require( 'kcaptcha_config.php' );
+        $alphabet = "0123456789abcdefghijklmnopqrstuvwxyz"; # do not change without changing font files!
+
+        # symbols used to draw CAPTCHA
+        //$allowed_symbols = "0123456789"; #digits
+        $allowed_symbols = "23456789abcdeghkmnpqsuvxyz"; #alphabet without similar symbols (o=0, 1=l, i=j, t=f)
+
+        # folder with fonts
+        $fontsdir = '/assets/fonts';
+
+        # CAPTCHA string length
+        $length = mt_rand(5,6); # random 5 or 6
+        //$length = 6;
+
+        # CAPTCHA image size (you do not need to change it, whis parameters is optimal)
+        $width = 120;
+        $height = 60;
+
+        # symbol's vertical fluctuation amplitude divided by 2
+        $fluctuation_amplitude = 5;
+
+        # increase safety by prevention of spaces between symbols
+        $no_spaces = true;
+
+        # show credits
+        $show_credits = false; # set to false to remove credits line. Credits adds 12 pixels to image height
+        $credits = ''; # if empty, HTTP_HOST will be shown
+
+        # CAPTCHA image colors (RGB, 0-255)
+        //$foreground_color = array(0, 0, 0);
+        //$background_color = array(220, 230, 255);
+        $foreground_color = array(mt_rand(0,100), mt_rand(0,100), mt_rand(0,100));
+        $background_color = array(mt_rand(200,255), mt_rand(200,255), mt_rand(200,255));
+
+        # JPEG quality of CAPTCHA image (bigger is better quality, but larger file size)
+        $jpeg_quality = 90;
+
         $fonts=array();
-        $fontsdir_absolute=dirname(__FILE__).$fontsdir;
+        $fontsdir_absolute=dirname(__DIR__).$fontsdir;
+
         if ($handle = opendir($fontsdir_absolute)) {
             while (false !== ($file = readdir($handle))) {
                 if (preg_match('/\.png$/i', $file)) {
@@ -200,16 +222,34 @@ class KCAPTCHA{
             }
         }
 
-        if(function_exists("imagejpeg")){
-            header("Content-Type: image/jpeg");
+        // Output image to a buffer..
+        ob_start();
+
+        if(function_exists("imagepng")) {
+            $mime_type = "image/png";
+            imagepng($img2, NULL, 0);
+        } else if(function_exists("imagejpeg")) {
+            $mime_type = "image/jpeg";
             imagejpeg($img2, null, $jpeg_quality);
-        }else if(function_exists("imagegif")){
-            header("Content-Type: image/gif");
+        } else if(function_exists("imagegif")) {
+            $mime_type = "image/gif";
             imagegif($img2);
-        }else if(function_exists("imagepng")){
-            header("Content-Type: image/x-png");
-            imagepng($img2);
+        } else {
+            echo '';
         }
+
+        $streamimage = ob_get_contents();
+        ob_end_clean();
+
+        // Convert image to data string...
+        $imageData = base64_encode($streamimage);
+
+        // Format the image SRC:  data:{mime};base64,{data};
+//        $src = 'data:'.mime_content_type($streamimage).';base64,'.$imageData;
+        $src = 'data:'.$mime_type.';base64,'.$imageData;
+
+        $this->image = $src;
+
     }
 
     // returns keystring

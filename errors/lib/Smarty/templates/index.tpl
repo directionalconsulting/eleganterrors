@@ -5,6 +5,7 @@
 <div id="canvas">
 	<div id="page">
 		<div id="content">
+			<!--[if $status->form eq 0]-->
 			<div id="leftcol">
 				<!--[if $status->credits eq 1]-->
 				<!--[include file="left.tpl"]-->
@@ -15,6 +16,7 @@
 				<!--[include file="right.tpl"]-->
 				<!--[/if]-->
 			</div>
+			<!--[/if]-->
 			<div id="maincol">
 				<!--[include file="alert.tpl"]-->
 				<!--[include file="$route.tpl"]-->

@@ -1,94 +1,298 @@
-form {
-    /*border: 1px yellow double;*/
+/* Document specs... */
+body {
+    font-family: "Helvetica Neue", "Segoe UI", Segoe, Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
     text-align: center;
-    padding: 15px;
-    margin: 15px auto;
-    /*width: 100%;*/
+    background-color: whitesmoke;
 }
 
-label {
-    font-size: 1.25em;
-    font-weight: 700;
-    text-align: left;
-    white-space: nowrap;
-    display: block;
-    padding: 6px 12px;
-}
-
-.field {
-    display: block;
-    letter-spacing: .1em;
+/* a href links decorations... */
+a {
     text-decoration: none;
 }
 
-#first_name, #last_name, #email, #message {
-    width: 85%;
-    font-size: 1.25em;
-    font-weight: 700;
+a:link, a:visited {
+    color: deepskyblue;
 }
 
-#submit:hover {
-    background-color: greenyellow;
+#reason a:hover {
+    color: green;
 }
 
-#keycode {
-    line-height: 2em;
-    font-size: 1.5em;
-    color: black;
-    font-weight: 500;
-    letter-spacing: .1em;
-    height: 100%;
+#footer a:link, #footer a:visited {
+    color: steelblue;
 }
 
-#cancel:hover {
-    background-color: red;
+#footer a:hover {
+    color: orange !important;
 }
 
-#quit, #key, #send {
-    vertical-align: top;
+a.contact:link, a.contact:visited {
+    color: firebrick;
+}
+
+a.credits:link, a.credits:visited {
+    color: tomato !important;
+}
+
+/* Page Layout and background canvas specs... */
+#page {
+    padding:15px;
     text-align: center;
-    height: 100%;
-    margin: 0 auto;
-    padding: 5px 15px;
-    display: inline-block;
-    clear: none;
+    margin: 0;
+    position: relative;
 }
 
-#key img {
-    display: inline-block;
-    clear: none;
-}
-
-#key input {
+#content {
+    content: "";
+    top: 0;
+    left: 0;
+    width: 80%;
+    border-radius: 15px;
+    border-style: double;
+    border-color: darkgrey;
+    border-width: thick;
+    margin: 10px auto;
     display: block;
-    clear: both;
-    margin: 0px;
+    background-color: floralwhite;
+    background-size: cover;
+    opacity: 1.0;
 }
 
-#key p {
-    text-align: center !important;
+#canvas {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    background-size: cover;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    display: block;
+    overflow: visible;
+    z-index: -1;
+    opacity: 0.7;
 }
 
-#message {
+/* Translate this page specs... */
+#translate {
+    margin: .5em 0;
+    text-align: center;
+    padding: 0;
+}
+
+#translate img {
+    height: 24px;
+    width: auto;
+    margin: 0 .5em;
+}
+
+/* Column Row specs... */
+.row:before, .row:after {
+    display: table;
+    content: " ";
+}
+
+.row {
+    margin: 0;
+    padding: 0;
+}
+
+/* Main Content CENTER column specs... */
+#maincol {
+    text-align: center;
+    display: inline-block;
+    width: 45%;
+    padding: 0;
+    margin: 1.5em;
     line-height: 1.5em;
-    height: 15em;
 }
 
-.veriword {
-    display: block;
+#maincol h1, #maincol h3 {
+    line-height: 1em;
+    padding: 0;
+    margin: 0.25em;
+}
+
+#reason, #response {
+    font-size: 21px;
+    font-weight: 200;
+}
+
+#response img {
+    width: auto;
+    height: 300px;
+    margin: 6px;
+}
+
+#response h1 {
+    font-size: 48px;
+    font-weight: 300;
+}
+
+.package {
+    color: firebrick;
+    font-size: 1em;
+    margin: .5em;
+}
+
+.status_code {
+    color: black;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5em;
+}
+
+/* LEFT and RIGHT column specs... */
+#rightcol, #leftcol {
+    margin: 1em;
+    padding: .25em;
+}
+
+#rightcol ul, #leftcol ul {
+    text-align: left;
+    text-decoration: none;
+    list-style: none;
+    text-indent: 5%;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    font-variant: small-caps;
+    display: inline-table;
+    margin: .5em;
+    padding: .25em;
+}
+
+#rightcol ul li, #leftcol ul li {
+    list-style: square;
+    font-size: 1.5em;
+    line-height: 1.25em;
+    color: firebrick;
+}
+
+#leftcol ul li.group, #rightcol ul li.group {
+    list-style: circle;
+    font-size: 1.125em;
+}
+
+#leftcol {
+    float: left;
+    width: 15%;
+}
+
+#rightcol {
+    float: right;
+    width: 15%;
+}
+
+/* Footer specs... */
+#footer {
+    clear: both;
+    text-align: center;
+    vertical-align: top;
+    text-decoration: none;
+    margin: 0;
+    padding: .5em 0;
+    background-color: rgba(33,33,33,.3);
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+}
+
+.center, .left, .right {
+    display: inline-block;
     clear: none;
-    padding: 0px 10px;
-    margin: 0px auto;
+    text-align: center;
     vertical-align: middle;
-    text-align: center;
+    position: relative;
 }
 
-.buttons {
-    width: 100%;
-    text-align: center;
+.center {
+    width: auto;
 }
 
-img.translate {
-    padding: 0px 10px;
-    width: 32px;
+.left {
+    text-align: left;
+    width: 15%;
 }
+.right {
+    text-align: right;
+    width: 15%;
+}
+
+#footer img {
+    width: auto;
+    height: 32px;
+}
+
+/* Code example specs... */
+code {
+    white-space: nowrap;
+    color:greenyellow;
+    background-color: black;
+    border: double 1px white;
+    padding: 3px 6px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+/* Blockquote specs... */
+blockquote {
+    background: #f9f9f9;
+    border-left: 10px solid #ccc;
+    margin: 1.5em 10px;
+    padding: 0.5em 10px;
+    quotes: "\201C""\201D""\2018""\2019";
+}
+blockquote:before {
+    color: #ccc;
+    content: open-quote;
+    font-size: 4em;
+    line-height: 0.1em;
+    margin-right: 0.25em;
+    vertical-align: -0.4em;
+}
+blockquote:after {
+    color: #ccc;
+    content: close-quote;
+    font-size: 4em;
+    line-height: 0.1em;
+    margin-right: 0.25em;
+    vertical-align: -0.4em;
+}
+blockquote p {
+    display: inline;
+}
+
+/* Form specs... */
+#errordiv {
+    border: 1px solid red;
+    background-color: #FFAFAF;
+    display: none;
+    width: 50%;
+    margin: 5px;
+}
+
+.required {
+    background-color: #CC4444;
+    margin-left: 13px;
+    display: inline;
+    margin-top: 7px;
+}
+
+.required:focus {
+    background-color: #fff;
+    border: 1px solid #f00;
+}
+
+.checkit {
+    background-color: #E0E5EF;
+    margin-left: 13px;
+    display: inline;
+    margin-top: 7px;
+}
+
+/* Last updated: 2015-10-31 18:50:56 */

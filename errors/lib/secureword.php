@@ -26,7 +26,7 @@
 
 include( 'kcaptcha.php' );
 
-$captcha = new KCAPTCHA();
+$captcha = new ElegantCaptcha();
 
 $_SESSION['captcha_keystring'] = $captcha->getKeyString();
 

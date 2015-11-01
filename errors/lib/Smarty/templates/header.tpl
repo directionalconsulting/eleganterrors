@@ -6,11 +6,12 @@
 		<script src="<!--[$base]-->/assets/js/chkform_lang.js" type="text/javascript" ></script>
 		<script src="<!--[$base]-->/assets/js/form.js" type="text/javascript" ></script>
 		<!---( Removed JS for now in favor of a single page load using PHP as it permits better file handling
-		script type="application/javascript" src="<!--[$base]-->assets/js/jquery-1.11.3.min.js"></script
-		script type="application/javascript" src="<!--[$base]-->assets/js/jquery.resizeframe.js"></script )-->
+		script type="application/javascript" src="< !--[$base]-- >assets/js/jquery-1.11.3.min.js"></script
+		script type="application/javascript" src="< !--[$base]-- >assets/js/jquery.resizeframe.js"></script )-->
+		<!-- link rel="stylesheet/less" type="text/css" href="< !--[$base]-- >/assets/css/styles.less" / -->
 		<link rel="stylesheet" href="<!--[$base]-->/assets/css/styles.css" type="text/css" media="screen" />
-		<link rel="stylesheet" href="<!--[$base]-->/assets/css/form.css" type="text/css" media="screen" />
-		<link rel="stylesheet" href="<!--[$base]-->/assets/css/alerts.css" type="text/css" media="screen" />
+		<!-- link rel="stylesheet" href="< !--[$base]-- >/assets/css/form.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="< !--[$base]-- >/assets/css/alerts.css" type="text/css" media="screen" / -->
 		<!--[if $config->global->background ne '']-->
 		<style type="text/css">
 			#canvas {

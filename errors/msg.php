@@ -154,7 +154,7 @@ class ElegantErrors {
 		$this->sendHeaders();
 
 		// @TODO - write render_error function and update Smarty libs...
-		$this->renderView($this->route);
+		$this->renderView();
 
 	} // end __construct()
 
@@ -190,25 +190,42 @@ class ElegantErrors {
 		// Check the $_SERVER[REQUEST_URI] for a matching $_GET pattern for clean SEO URLs...
 		preg_match_all('%/([a-z0-9\-\._+:]{1,})%',$this->env->request,$matches);
 
+		// SEO Friendly matching using .htaccess redirect rules... - >> NO *.php?c=
 		if (!isset($_GET['c']) && isset($matches[1]) && is_array($matches[1]) && !empty($matches[1]))
 		{
+			// Set array of all found SEO params...
 			$found = $matches[1];
 			$i = 0;
+
+			// Iterate over /baseDir/Code/RedirectURL
 			foreach ($found as $match) {
+
+				// Check the first param, base dir match...
 				if (preg_match('%'._BASE.'%',$match) && $i == 0) {
 				}
+
+				// Check the second param, error code
 				if (preg_match('%\d{1,4}%',$match) && $i == 1) {
 					$this->code = (int) $match;
 				}
+
+				// Check the third param, redirect
 				if (preg_match('%[a-z0-9\-+_\./]{1,}%i',$match) && $i == 2) {
+
+					// Self hosted URL match...
 					if (preg_match('%^.*?\.\w{2,4}%i',$match)) {
 						$this->url = 'http://'.$match;
+
+					// External URL match...
 					} else {
 						$this->url = 'http://'.$_SERVER['HTTP_HOST']."/".$match;
 					}
 				}
+
+				// Increment iterations of params...
 				$i++;
 			}
+		// $_GET['c'] found, so let's use those params...
 		} else {
 			// Set the code if an integer is found...
 			if ( isset( $_GET['c'] ) && preg_match( '%\d{1,4}%', $_GET['c'] ) ) {
@@ -221,15 +238,19 @@ class ElegantErrors {
 			}
 		}
 
+		// Convert config->routes to array to loop...
 		$routes = $this->objectToArray($this->config->routes);
-		// Search the routes for a matching regex URL pattern to return a template...
-		foreach ($routes as $template => $path) {
-			if (preg_match("%".$path."%",$this->env->request)) {
-				$this->route = $template;
-			}
-		}
 
-	}
+		// Search the routes for a matching regex URL pattern to return a template...
+		foreach ($routes as $route => $path) {
+
+			// Check the config->routes for a matching REQUEST_URI...
+			if (preg_match("%".$path."%",$this->env->request)) {
+				$this->route = $route;
+			}
+
+		}
+	} // end getRoute()
 
 	/**
 	 * Creates $this->status object with response, reason, image and retry values
@@ -244,6 +265,7 @@ class ElegantErrors {
 			$this->status = $this->config->codes->$code;
 		}
 		$this->status->credits = 0;
+		$this->status->form = 0;
 		switch (true) {
 			case $this->code < 100:
 				$this->status->color = 'darkviolet';
@@ -270,9 +292,21 @@ class ElegantErrors {
 			default:
 				$this->status->color = 'red';
 		}
-		if ((string)$this->route === (string)$this->config->routes->credits) {
+		if ($this->route === 'credits') {
 			$this->status->credits = 1;
 		}
+		if ($this->route === 'form') {
+			$this->status->form = 1;
+			$this->getCaptcha();
+		}
+	}
+
+	private function getCaptcha() {
+
+		require( 'kcaptcha.php' );
+		$captcha = new ElegantCaptcha();
+		$this->status->captcha = $captcha->image;
+		$this->status->keystring = $captcha->getKeyString();
 	}
 
 	/**
@@ -307,65 +341,14 @@ class ElegantErrors {
 		}
 	}
 
-	// @TODO - Convert all template.inc.php's to template.tpl's Smarty && update library API's...
-	/**
-	 *
-	 *
-		// Check $_POST for Cancel button, Successful Captcha keystring and some values...
-		$this->success  = 0;
-		$this->tryagain = 0;
-		if ( isset( $_POST ) ) {
-			if ( isset( $_POST['cancel'] ) ) {
-				$this->tryagain = 0;
-				$location       = "http://" . $_SERVER['HTTP_HOST'];
-				unset( $_SESSION['captcha_keystring'] );
-				session_destroy();
-				header( "Location: $location" );
-			} else {
-				if ( count( $_POST ) > 0 ) {
-					if ( isset( $_SESSION['captcha_keystring'] ) && $_SESSION['captcha_keystring'] == $_POST['keystring'] ) {
-						$this->tryagain = 0;
-						$this->success  = 1;
-					} else {
-						$this->tryagain = 1;
-					}
-				}
-			}
-		}
-
-		 * @package formmail && Smarty
-		 * Example of how to set-up static variables embedded into the lib/formmail.php library
-		 *
-		 * Step 1. extract($_POST) - if it's present and save state for form reloads...
-		 *
-		 * Step 2. Decode & Sanititize the variables to prevent injection...
-	 *
-	 * @TODO - Improve upon this from previous work I've done ;)
-		 *
-		 * // Some built in variables in the formmail package...
-		 *
-		 * $email = stripslashes(urldecode($email));
-		 * $first = stripslashes(urldecode($first));
-		 * $last = stripslashes(urldecode($last));
-		 * $address = stripslashes(urldecode($address));
-		 * $city = stripslashes(urldecode($city));
-		 * $state = stripslashes(urldecode($state));
-		 * $file = stripslashes(urldecode($file));
-		 * $file2 = stripslashes(urldecode($file2));
-		 * $file3 = stripslashes(urldecode($file3));
-		 * $message = stripslashes(urldecode($message));
-		 *
-		 * Step 3. Load Smarty Vars, Cache Options, & Filters -> Render View
-		 **/
-
-	protected function renderView($template) {
+	protected function renderView() {
 
 		// Load and execute leafo/lessphp
 		require_once('lessc.inc.php');
 		$less = new lessc;
-		$less->checkedCompile('assets/css/package.less', 'assets/css/package.css');
+		$less->checkedCompile('assets/css/stlyes.less', 'assets/css/styles.css');
 
-//		// Load Smarty class using config file and create $smarty instance...
+		// Load Smarty class using config file and create $smarty instance...
 		require_once('smarty.inc.php');
 
 		// Make certain $smarty is initialized before we compile, if not throw error and abort!
@@ -384,7 +367,6 @@ class ElegantErrors {
 		$smarty->assign('status',$this->status);
 		$smarty->assign('stopwatch', $this->stopwatch);
 
-//		$smarty->display($template.'.tpl');
 		$smarty->display('index.tpl');
 		return true;
 	}
@@ -524,5 +506,56 @@ class ElegantErrors {
 	}
 
 }
+
+// @TODO - Convert all template.inc.php's to template.tpl's Smarty && update library API's...
+/**
+ *
+ *
+// Check $_POST for Cancel button, Successful Captcha keystring and some values...
+$this->success  = 0;
+$this->tryagain = 0;
+if ( isset( $_POST ) ) {
+if ( isset( $_POST['cancel'] ) ) {
+$this->tryagain = 0;
+$location       = "http://" . $_SERVER['HTTP_HOST'];
+unset( $_SESSION['captcha_keystring'] );
+session_destroy();
+header( "Location: $location" );
+} else {
+if ( count( $_POST ) > 0 ) {
+if ( isset( $_SESSION['captcha_keystring'] ) && $_SESSION['captcha_keystring'] == $_POST['keystring'] ) {
+$this->tryagain = 0;
+$this->success  = 1;
+} else {
+$this->tryagain = 1;
+}
+}
+}
+}
+
+ * @package formmail && Smarty
+ * Example of how to set-up static variables embedded into the lib/formmail.php library
+ *
+ * Step 1. extract($_POST) - if it's present and save state for form reloads...
+ *
+ * Step 2. Decode & Sanititize the variables to prevent injection...
+ *
+ * @TODO - Improve upon this from previous work I've done ;)
+ *
+ * // Some built in variables in the formmail package...
+ *
+ * $email = stripslashes(urldecode($email));
+ * $first = stripslashes(urldecode($first));
+ * $last = stripslashes(urldecode($last));
+ * $address = stripslashes(urldecode($address));
+ * $city = stripslashes(urldecode($city));
+ * $state = stripslashes(urldecode($state));
+ * $file = stripslashes(urldecode($file));
+ * $file2 = stripslashes(urldecode($file2));
+ * $file3 = stripslashes(urldecode($file3));
+ * $message = stripslashes(urldecode($message));
+ *
+ * Step 3. Load Smarty Vars, Cache Options, & Filters -> Render View
+ **/
 // @TODO --> REPLACE Begin the document with render_error and render_form plus update Smarty API -> [ ]::in-process...
 ?>
