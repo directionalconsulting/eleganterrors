@@ -55,6 +55,7 @@ credits:
       IETF_RFC: https://www.ietf.org/rfc.html
       HTTP_Status_Codes: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
       TimBL: https://en.wikipedia.org/wiki/Tim_Berners-Lee
+      arpanet: https://en.wikipedia.org/wiki/ARPANET
     Apache_Server:
       HTAccess: http://httpd.apache.org/docs/current/howto/htaccess.html
       Custom_Error_Documents: https://httpd.apache.org/docs/2.4/custom-error.html
@@ -70,10 +71,6 @@ credits:
       Error_Pages: https://www.nginx.com/resources/wiki/start/topics/examples/fullexample2/?highlight=error_page
     Microsoft_IIS:
       Custom_Error_Response: https://technet.microsoft.com/en-us/library/cc731570(v=ws.10).aspx
-#    References:
-#      TimBL: https://en.wikipedia.org/wiki/Tim_Berners-Lee
-#      ARPANET: https://en.wikipedia.org/wiki/ARPANET
-#      Lynx: https://en.wikipedia.org/wiki/Lynx_(web_browser)
   right:
     Markup:
       HTML5: https://en.wikipedia.org/wiki/HTML5
@@ -90,8 +87,8 @@ credits:
       MySQL: http://dev.mysql.com/
       JavaScript: https://en.wikipedia.org/wiki/JavaScript
       JQuery: https://jquery.com/
-      LESS: http://lesscss.org/
       Sass: http://sass-lang.com/
+      less: http://lesscss.org/
     Standards:
       TCP/IP: https://en.wikipedia.org/wiki/Internet_protocol_suite
       HTTP: https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol
