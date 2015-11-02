@@ -1,16 +1,16 @@
 <?php
 /**
- * Simple stopwatch, useful for timing PHP code execution, includes split times
+ * Simple ElegantTimer, useful for timing PHP code execution, includes split times
  *
  * Example use:
- *    $stopwatch = new stopwatch;
+ *    $ElegantTimer = new ElegantTimer;
  *    ...
  *    // Pass whatever comment you like
- *    $stopwatch->lap("in my_func() at start");
+ *    $ElegantTimer->lap("in my_func() at start");
  *     ...
- *    $stopwatch->lap("in my_func() in middle");
+ *    $ElegantTimer->lap("in my_func() in middle");
  *    ...
- *    $stopwatch->lap("in my_func() at end");
+ *    $ElegantTimer->lap("in my_func() at end");
  *
  * Example output:
  *     in my_func(), at start split time 0.00 seconds
@@ -22,10 +22,9 @@
  *   in my_func() at end split time 2.58 seconds
  *   in my_func() at end elapsed time 9.07 seconds
  *
- * @author Hugh Prior    stopwatch@priorwebsites.com
- */
-class stopwatch
-{
+  */
+class ElegantTimer extends ElegantErrors {
+
     //properties
     var $start_time;
     var $stop_time;
@@ -33,18 +32,26 @@ class stopwatch
     var $lap_times;
 
     /**
-     * Initialise stopwatch by starting it going
-     */
-    function __construct()
-    {
-        $this->start();
+     * Initialise ElegantTimer by starting it going
+     **/
+    function __construct() {
+//        parent::__construct();
         $this->lap_times = array();
+        $this->start();
+    }
+
+    /**
+     * Set start time
+     */
+    protected function start()
+    {
+        $this->start_time = $this->get_microtime();
     }
 
     /**
     /* get_microtime function taken from Everett Michaud on Zend.com
      */
-    function get_microtime()
+    protected function get_microtime()
     {
         list($secs, $micros) = split(" ", microtime());
         $mt = $secs + $micros;
@@ -52,18 +59,11 @@ class stopwatch
         return $mt;
     }
 
-    /**
-     * Set start time
-     */
-    function start()
-    {
-        $this->start_time = $this->get_microtime();
-    }
 
     /**
      * Set end time
      */
-    function stop()
+    protected function stop()
     {
         $this->stop_time = $this->get_microtime();
     }
@@ -71,7 +71,7 @@ class stopwatch
     /**
      * Get the elapsed time
      */
-    function get_elapsed()
+    protected function get_elapsed()
     {
         $time_now = $this->get_microtime();
         $elapsed = $time_now  -  $this->start_time;
@@ -82,7 +82,7 @@ class stopwatch
     /**
      * Get the last split (lap) time
      */
-    function get_last_split()
+    protected function get_last_split()
     {
         $time_now = $this->get_microtime();
         $laps_done = sizeof($this->lap_times);
@@ -101,7 +101,7 @@ class stopwatch
     /**
      * Look at the times (i.e. print it!)
      */
-    function lap($comment="")
+    protected function lap($comment="")
     {
         $split = $this->get_last_split();
         $split = number_format($split, 2);
@@ -118,7 +118,7 @@ class stopwatch
 
     }
 
-    function rendered($comment="")
+    protected function rendered($comment="")
     {
         $split = $this->get_last_split();
         $split = number_format($split, 2);
@@ -127,8 +127,7 @@ class stopwatch
         $elapsed = number_format($elapsed, 2);
 
         print "\n<!--page rendered: $elapsed seconds-->\n";
-        return;
-
+        flush();
     }
 
 }

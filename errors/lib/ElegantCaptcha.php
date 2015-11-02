@@ -1,10 +1,13 @@
 <?php
-class ElegantCaptcha {
+class ElegantCaptcha extends ElegantErrors {
 
-    public $image;
+    function __construct(ElegantErrors $elegantErrors) {}
 
-    // generates keystring and image
-    function __construct() {
+    private $keystring;
+
+    private $captcha;
+    
+    public function setCaptcha() {
 
         $alphabet = "0123456789abcdefghijklmnopqrstuvwxyz"; # do not change without changing font files!
 
@@ -13,7 +16,7 @@ class ElegantCaptcha {
         $allowed_symbols = "23456789abcdeghkmnpqsuvxyz"; #alphabet without similar symbols (o=0, 1=l, i=j, t=f)
 
         # folder with fonts
-        $fontsdir = '/assets/fonts';
+        $fontsdir = _ASSETS.'fonts';
 
         # CAPTCHA string length
         $length = mt_rand(5,6); # random 5 or 6
@@ -43,7 +46,7 @@ class ElegantCaptcha {
         $jpeg_quality = 90;
 
         $fonts=array();
-        $fontsdir_absolute=dirname(__DIR__).$fontsdir;
+        $fontsdir_absolute=dirname(__DIR__).DIRECTORY_SEPARATOR.$fontsdir;
 
         if ($handle = opendir($fontsdir_absolute)) {
             while (false !== ($file = readdir($handle))) {
@@ -248,14 +251,16 @@ class ElegantCaptcha {
 //        $src = 'data:'.mime_content_type($streamimage).';base64,'.$imageData;
         $src = 'data:'.$mime_type.';base64,'.$imageData;
 
-        $this->image = $src;
+        $this->captcha = $src;
 
     }
 
-    // returns keystring
-    function getKeyString(){
-        return $this->keystring;
+    // returns keystring and base64 string image
+    public function getKeyString() {
+        $this->status->keystring = $this->keystring;
+        $this->status->captcha= $this->captcha;
     }
+
 }
 
 ?>

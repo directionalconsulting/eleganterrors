@@ -2,8 +2,9 @@
 	<div id="reason">
 		<form method="post"
 		      enctype="application/x-www-form-urlencoded"
-		      action="<!--[$base]-->/contact"
-		      method="post"
+		      action="<!--[$base]-->/<!--[$config->routes->form]-->"
+		      name="<!--[$config->routes->form]-->"
+		      id="<!--[$config->routes->form]-->"
 		      onsubmit="return configureValidation(this,3);"
 		      onreset="confirm(errormsg[99]); reset(); clearForm(this); history.go();">
 			<input type="hidden" name="redirect" value="<!--[$base]-->/thank-you">
