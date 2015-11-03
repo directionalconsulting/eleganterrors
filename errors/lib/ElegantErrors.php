@@ -15,7 +15,7 @@ require('ElegantTimer.php');
 require('ElegantTools.php');
 require('ElegantViews.php');
 require('ElegantCaptcha.php');
-//require('ElegantMail.php');
+require('ElegantMail.php');
 
 
 class ElegantErrors {

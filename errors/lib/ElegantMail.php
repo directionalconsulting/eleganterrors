@@ -1,294 +1,60 @@
 <?php
-/**
- * @author Gordon Hackett -  Directional-Consulting
- * @date 2015-10-17 08:17:33
- * @timestamp 1445095063089
- * @version 5.1.1
- * @see formmail.php circa 2004 from PHP Classes website - original author references no longer working...
- * @TODO - convert old package into clean modular class...
- **/
-
-if (!defined('_TLDDOMAIN')) {
-    define('_TLDDOMAIN',$_SERVER['HTTP_HOST']);
+if ( ! defined( '_TLDDOMAIN' ) ) {
+    define( '_TLDDOMAIN', $_SERVER['HTTP_HOST'] );
 }
-// field / value seperator
-define("SEPARATOR", ($separator)?$separator:": ");
-
-// content newline
-define("NEWLINE", ($newline)?$newline:"\n");
-
-// formmail version (for debugging mostly)
-define("VERSION", "5.0.1");
-
-
-
 class ElegantMail extends ElegantErrors {
 
-    // for ultimate security, use this instead of using the form
-    public $recipient; // youremail@domain.com
+    private $content;
+    private $referers;
+    private $banlist;
+    private $recipient;
+    private $required;
+    private $missing_fields_redirect;
 
-    // bcc emails (separate multiples with commas (,))
-    public $bcc;
+    function __construct(ElegantErrors $elegantErrors) {
 
-    // referers.. domains/ips that you will allow forms to
-    // reside on.
-    public $referers = array ('',_TLDDOMAIN);
+        $this->recipient = $this->config->contact->email;
 
-    // banned emails, these will be email addresses of people
-    // who are blocked from using the script (requested)
-    public $banlist = array ();
+        $this->referers = $this->config->contact->referers;
 
-    function __construct() {
+        $this->banlist = $this->config->contact->banlist;
 
-    if (!defined('_TLDDOMAIN')) {
-        define('_TLDDOMAIN',$_SERVER['HTTP_HOST']);
+        $this->required = $this->config->contact->required;
     }
 
-    // for ultimate security, use this instead of using the form
-    $recipient = "info@"._TLDDOMAIN; // youremail@domain.com
+    public function sendMail() {
 
-    // bcc emails (separate multiples with commas (,))
-    $bcc = "mftm@aol.com";
+        self::parseForm();
 
-    // referers.. domains/ips that you will allow forms to
-    // reside on.
-    $referers = array ('',_TLDDOMAIN);
+        $email = $this->contact->email;
 
-    // banned emails, these will be email addresses of people
-    // who are blocked from using the script (requested)
-    $banlist = array ('*@somedomain.com', 'user@domain.com', 'etc@domains.com');
+        $recipient = $this->config->contact->email;
 
-    // field / value seperator
-    define("SEPARATOR", ($separator)?$separator:": ");
+        $referers = $this->referers;
 
-    // content newline
-    define("NEWLINE", ($newline)?$newline:"\n");
-
-    // formmail version (for debugging mostly)
-    define("VERSION", "5.0.1");
-
-
-    // our mighty errors function..
-    function print_error($reason,$type = 0) {
-        build_body($title, $bgcolor, $text_color, $link_color, $vlink_color, $alink_color, $style_sheet);
-        // for missing required data
-        if ($type == "missing") {
-        if ($missing_field_redirect) {
-            header("Location: $missing_field_redirect?errors=$reason");
-            exit;
-        } else {
-            ?>
-            The form was not submitted for the following reasons:<p>
-            <ul><?php                 echo $reason."\n";
-                ?></ul>
-            Please use your browser's back button to return to the form and try again.<?php
-        }
-    } else { // every other errors
-            ?>
-    The form was not submitted because of the following reasons:<p>
-        <?php     }
-        echo "<br><br>\n";
-        }
-
-        // function to check the banlist
-        // suggested by a whole lot of people.. Thanks
-        function check_banlist($banlist, $email) {
-            if (count($banlist)) {
-                $allow = true;
-                foreach($banlist as $banned) {
-                    $temp = explode("@", $banned);
-                    if ($temp[0] == "*") {
-                        $temp2 = explode("@", $email);
-                        if (trim(strtolower($temp2[1])) == trim(strtolower($temp[1])))
-                            $allow = false;
-                    } else {
-                        if (trim(strtolower($email)) == trim(strtolower($banned)))
-                            $allow = false;
-                    }
-                }
-            }
-            if (!$allow) {
-                print_error("You are using from a <b>banned email address.</b>");
-            }
-        }
-
-        // function to check the referer for security reasons.
-        // contributed by some one who's name got lost.. Thanks
-        // goes out to him any way.
-        function check_referer($referers) {
-            if (count($referers)) {
-                $found = false;
-
-                $temp = explode("/",getenv("HTTP_REFERER"));
-                $referer = $temp[2];
-
-                if ($referer=="") {$referer = $_SERVER['HTTP_REFERER'];
-                    list($remove,$stuff)=split('//',$referer,2);
-                    list($home,$stuff)=split('/',$stuff,2);
-                    $referer = $home;
-                }
-
-                for ($x=0; $x < count($referers); $x++) {
-                    if (eregi ($referers[$x], $referer)) {
-                        $found = true;
-                    }
-                }
-                if ($referer =="")
-                    $found = false;
-                if (!$found){
-                    print_error("You are coming from an <b>unauthorized domain.</b>");
-                    error_log("[FormMail.php] Illegal Referer. (".getenv("HTTP_REFERER").")", 0);
-                }
-                return $found;
-            } else {
-                return false; // not a good idea, if empty, it will allow it.
-            }
-        }
-
+        $banlist = $this->banlist;
 
         if ($referers)
-            check_referer($referers);
+            self::checkReferer($referers);
 
         if ($banlist)
-            check_banlist($banlist, $email);
+            self::checkBanlist($banlist, $email);
 
-        // This function takes the sorts, excludes certain keys and
-        // makes a pretty content string.
-        function parse_form($array, $sort = "") {
-            // build reserved keyword array
-            $reserved_keys[] = "MAX_FILE_SIZE";
-            $reserved_keys[] = "required";
-            $reserved_keys[] = "redirect";
-            $reserved_keys[] = "require";
-            $reserved_keys[] = "path_to_file";
-            $reserved_keys[] = "recipient";
-            $reserved_keys[] = "subject";
-            $reserved_keys[] = "sort";
-            $reserved_keys[] = "style_sheet";
-            $reserved_keys[] = "bgcolor";
-            $reserved_keys[] = "text_color";
-            $reserved_keys[] = "link_color";
-            $reserved_keys[] = "vlink_color";
-            $reserved_keys[] = "alink_color";
-            $reserved_keys[] = "title";
-            $reserved_keys[] = "missing_fields_redirect";
-            $reserved_keys[] = "env_report";
-            $reserved_keys[] = "submit";
-            if (count($array)) {
-                if (is_array($sort)) {
-                    foreach ($sort as $field) {
-                        $reserved_violation = 0;
-                        for ($ri=0; $ri<count($reserved_keys); $ri++)
-                            if ($array[$field] == $reserved_keys[$ri]) $reserved_violation = 1;
-
-                        if ($reserved_violation != 1) {
-                            if (is_array($array[$field])) {
-                                for ($z=0;$z<count($array[$field]);$z++)
-                                    $content .= $field.SEPARATOR.$array[$field][$z].NEWLINE;
-                            } else
-                                $content .= $field.SEPARATOR.$array[$field].NEWLINE;
-                        }
-                    }
-                }
-                while (list($key, $val) = each($array)) {
-                    $reserved_violation = 0;
-                    for ($ri=0; $ri<count($reserved_keys); $ri++)
-                        if ($key == $reserved_keys[$ri]) $reserved_violation = 1;
-
-                    for ($ri=0; $ri<count($sort); $ri++)
-                        if ($key == $sort[$ri]) $reserved_violation = 1;
-
-                    // prepare content
-                    if ($reserved_violation != 1) {
-                        if (is_array($val)) {
-                            for ($z=0;$z<count($val);$z++)
-                                $content .= $key.SEPARATOR.$val[$z].NEWLINE;
-                        } else
-                            $content .= $key.SEPARATOR.$val.NEWLINE;
-                    }
-                }
-            }
-            return $content;
-        }
-
-        // mail the content we figure out in the following steps
-        function mail_it($content, $subject, $email, $recipient) {
-            global $attachment_chunk, $attachment_name, $attachment_type, $attachment_sent, $bcc;
-
-            $ob = "----=_OuterBoundary_000";
-            $ib = "----=_InnerBoundery_001";
-
-            $headers  = "MIME-Version: 1.0\r\n";
-            if ($recipient=="info@"._TLDDOMAIN) {
-                $email = "info@"._TLDDOMAIN;
-            }
-            $headers .= "From: ".$email."\n";
-            $headers .= "To: ".$recipient."\n";
-            $headers .= "Reply-To: ".$email."\n";
-            if ($bcc) $headers .= "Bcc: ".$bcc."\n";
-            $headers .= "X-Priority: 1\n";
-            $headers .= "X-Mailer: DT Formmail".VERSION."\n";
-            $headers .= "Content-Type: multipart/mixed;\n\tboundary=\"".$ob."\"\n";
-
-
-            $message  = "This is a multi-part message in MIME format.\n";
-            $message .= "\n--".$ob."\n";
-            $message .= "Content-Type: multipart/alternative;\n\tboundary=\"".$ib."\"\n\n";
-            $message .= "\n--".$ib."\n";
-            $message .= "Content-Type: text/plain;\n\tcharset=\"iso-8859-1\"\n";
-            $message .= "Content-Transfer-Encoding: quoted-printable\n\n";
-            $message .= $content."\n\n";
-            $message .= "\n--".$ib."--\n";
-            if ($attachment_name && !$attachment_sent) {
-                $message .= "\n--".$ob."\n";
-                $message .= "Content-Type: $attachment_type;\n\tname=\"".$attachment_name."\"\n";
-                $message .= "Content-Transfer-Encoding: base64\n";
-                $message .= "Content-Disposition: attachment;\n\tfilename=\"".$attachment_name."\"\n\n";
-                $message .= $attachment_chunk;
-                $message .= "\n\n";
-                $attachment_sent = 1;
-            }
-            $message .= "\n--".$ob."--\n";
-
-            mail($recipient, $subject, $message, $headers);
-        }
-
-        // take in the body building arguments and build the body tag for page display
-        function build_body($title, $bgcolor, $text_color, $link_color, $vlink_color, $alink_color, $style_sheet) {
-            if ($style_sheet)
-                echo "<link rel=stylesheet href=\"$style_sheet\" type=\"text/css\">\n";
-            if ($title)
-                echo "<title>$title</title>\n";
-            if (!$bgcolor)
-                $bgcolor = "#FFFFFF";
-            if (!$text_color)
-                $text_color = "#000000";
-            if (!$link_color)
-                $link_color = "#0000FF";
-            if (!$vlink_color)
-                $vlink_color = "#FF0000";
-            if (!$alink_color)
-                $alink_color = "#000088";
-            if ($background)
-                $background = "background=\"$background\"";
-            echo "<body bgcolor=\"$bgcolor\" text=\"$text_color\" link=\"$link_color\" vlink=\"$vlink_color\" alink=\"$alink_color\" $background>\n\n";
-        }
-
-        // check for a recipient email address and check the validity of it
-        // Thanks to Bradley miller (bradmiller@accesszone.com) for pointing
-        // out the need for multiple recipient checking and providing the code.
         $recipient_in = split(',',$recipient);
         for ($i=0;$i<count($recipient_in);$i++) {
             $recipient_to_test = trim($recipient_in[$i]);
+            //@TODO - Replace eregi...
             if (!eregi("^[_\\.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,6}$", $recipient_to_test)) {
-                print_error("<b>I NEED VALID RECIPIENT EMAIL ADDRESS ($recipient_to_test) TO CONTINUE</b>");
+                self::printError("<b>I NEED VALID RECIPIENT EMAIL ADDRESS ($recipient_to_test) TO CONTINUE</b>");
             }
         }
 
-        // This is because I originally had it require but too many people
-        // were used to Matt's Formmail.pl which used required instead.
-        if ($required)
-            $require = $required;
+        (isset($this->config->contact->missing_fields_redirect)) ?
+            $missing_fields_redirect = $this->config->contact->missing_fields_redirect: $missing_fields_redirect = null;
+        $missing_field_list = '';
+
+        if ($this->required)
+            $require = $this->required;
         // handle the required fields
         if ($require) {
             // seperate at the commas
@@ -312,39 +78,7 @@ class ElegantMail extends ElegantErrors {
                 print_error($missing_field_list,"missing");
         }
 
-        // check the email fields for validity
-        if (($email) || ($EMAIL)) {
-            $email = trim($email);
-            if ($EMAIL) $email = trim($EMAIL);
-            if (!eregi("^[_\.0-9a-z-]+@([0-9a-z][0-9a-z-]+\.)+[a-z]{2,6}$", $email))
-                print_error("your <b>email address</b> is invalid");
-            $EMAIL = $email;
-        }
-
-        // check zipcodes for validity
-        if (($ZIP_CODE) || ($zip_code)) {
-            $zip_code = trim($zip_code);
-            if ($ZIP_CODE) $zip_code = trim($ZIP_CODE);
-            if (!ereg("(^[0-9]{5})-([0-9]{4}$)", trim($zip_code)) && (!ereg("^[a-zA-Z][0-9][a-zA-Z][[:space:]][0-9][a-zA-Z][0-9]$", trim($zip_code))) && (!ereg("(^[0-9]{5})", trim($zip_code))))
-                print_error("your <b>zip/postal code</b> is invalid");
-        }
-
-        // check phone for validity
-        if (($PHONE_NO) || ($phone_no)) {
-            $phone_no = trim($phone_no);
-            if ($PHONE_NO) $phone_no = trim($PHONE_NO);
-            if (!ereg("(^(.*)[0-9]{3})(.*)([0-9]{3})(.*)([0-9]{4}$)", $phone_no))
-                print_error("your <b>phone number</b> is invalid");
-        }
-
-        // check phone for validity
-        if (($FAX_NO) || ($fax_no)) {
-            $fax_no = trim($fax_no);
-            if ($FAX_NO) $fax_no = trim($FAX_NO);
-            if (!ereg("(^(.*)[0-9]{3})(.*)([0-9]{3})(.*)([0-9]{4}$)", $fax_no))
-                print_error("your <b>fax number</b> is invalid");
-        }
-
+        (isset($this->config->contact->sort)) ? $sort = $this->config->contact->sort : $sort = "alphabetic";
         // sort alphabetic or prepare an order
         if ($sort == "alphabetic") {
             uksort($_POST, "strnatcasecmp");
@@ -352,9 +86,9 @@ class ElegantMail extends ElegantErrors {
             $sort = $list;
         }
 
-        // prepare the content
-        $content = parse_form($_POST, $sort);
-
+        /**
+         * @TODO - Implement attach file(s) option... TBD
+         *
         // check for an attachment if there is a file upload it
         if ($attachment_name) {
             if ($attachment_size > 0) {
@@ -422,6 +156,9 @@ class ElegantMail extends ElegantErrors {
             }
         }
 
+         *
+         * @TODO - Implement withClass environment report :: WIP TBD
+         *
         // if the env_report option is on: get eviromental variables
         if ($env_report) {
             $env_report = ereg_replace( " +", "", $env_report);
@@ -439,9 +176,10 @@ class ElegantMail extends ElegantErrors {
                     $content .= "BROWSER: ". $_SERVER['HTTP_USER_AGENT']."\n";
             }
         }
-
+         **/
+        die("Got to here, almost home...");
         // send it off
-        mail_it(stripslashes($content), ($subject)?stripslashes($subject):"Form Submission", $email, $recipient);
+        self::postMaster(stripslashes($content), ($subject)?stripslashes($subject):"Form Submission", $email, $recipient);
         if (file_exists($ar_file)) {
             $fd = fopen($ar_file, "rb");
             $ar_message = fread($fd, filesize($ar_file));
@@ -467,5 +205,206 @@ class ElegantMail extends ElegantErrors {
             print_r($_FILES);
         }
 
+    }
+
+    protected function buildBody($title, $bgcolor, $text_color, $link_color, $vlink_color, $alink_color, $style_sheet) {
+        if ($style_sheet)
+            echo "<link rel=stylesheet href=\"$style_sheet\" type=\"text/css\">\n";
+        if ($title)
+            echo "<title>$title</title>\n";
+        if (!$bgcolor)
+            $bgcolor = "#FFFFFF";
+        if (!$text_color)
+            $text_color = "#000000";
+        if (!$link_color)
+            $link_color = "#0000FF";
+        if (!$vlink_color)
+            $vlink_color = "#FF0000";
+        if (!$alink_color)
+            $alink_color = "#000088";
+        if ($background)
+            $background = "background=\"$background\"";
+        echo "<body bgcolor=\"$bgcolor\" text=\"$text_color\" link=\"$link_color\" vlink=\"$vlink_color\" alink=\"$alink_color\" $background>\n\n";
+    }
+
+    protected function printError($reason,$type = 0) {
+        /**
+         * @TODO - Implement HTML options for styling in config and form...
+         * self::buildBody($title, $bgcolor, $text_color, $link_color, $vlink_color, $alink_color, $style_sheet);
+         */
+
+        if ($type == "missing") {
+            // @TODO - revisit this...
+            if ($missing_field_redirect) {
+                header("Location: $missing_field_redirect?errors=$reason");
+                exit;
+            } else {
+                ?>
+                The form was not submitted for the following reasons:<p>
+                <ul><?php                 echo $reason."\n";
+                    ?></ul>
+                Please use your browser's back button to return to the form and try again.<?php
+            }
+        } else { // every other errors
+            ?>
+            The form was not submitted because of the following reasons:<p>
+        <?php     }
+        echo "<br><br>\n";
+    }
+
+    protected function checkBanlist($banlist, $email) {
+        if (count($banlist)) {
+            $allow = true;
+            foreach($banlist as $banned) {
+                $temp = explode("@", $banned);
+                if ($temp[0] == "*") {
+                    $temp2 = explode("@", $email);
+                    if (trim(strtolower($temp2[1])) == trim(strtolower($temp[1])))
+                        $allow = false;
+                } else {
+                    if (trim(strtolower($email)) == trim(strtolower($banned)))
+                        $allow = false;
+                }
+            }
+        }
+        if (!$allow) {
+            print_error("You are using from a <b>banned email address.</b>");
+        }
+    }
+
+    protected function checkReferer() {
+        $referers = $this->referers;
+        if (count($referers)) {
+            $found = false;
+
+            $temp = explode("/",getenv("HTTP_REFERER"));
+            $referer = $temp[2];
+
+            if ($referer=="") {$referer = $_SERVER['HTTP_REFERER'];
+                list($remove,$stuff)=split('//',$referer,2);
+                list($home,$stuff)=split('/',$stuff,2);
+                $referer = $home;
+            }
+
+            for ($x=0; $x < count($referers); $x++) {
+                // @TODO - Replace with preg_replace...
+                if (eregi ($referers[$x], $referer)) {
+                    $found = true;
+                }
+            }
+            if ($referer =="")
+                $found = false;
+            if (!$found){
+                print_error("You are coming from an <b>unauthorized domain.</b>");
+                error_log("[FormMail.php] Illegal Referer. (".getenv("HTTP_REFERER").")", 0);
+            }
+            return $found;
+        } else {
+            return false; // not a good idea, if empty, it will allow it.
+        }
+    }
+
+    public function parseForm() {
+        if (isset($_POST) and !empty($_POST)) {
+            $array = $_POST;
+        }
+        (isset($this->config->contact->sort)) ? $sort = $this->config->contact->sort : $sort = null;
+        // build reserved keyword array
+        $reserved_keys[] = "MAX_FILE_SIZE";
+        $reserved_keys[] = "required";
+        $reserved_keys[] = "redirect";
+        $reserved_keys[] = "require";
+        $reserved_keys[] = "path_to_file";
+        $reserved_keys[] = "recipient";
+        $reserved_keys[] = "subject";
+        $reserved_keys[] = "sort";
+        $reserved_keys[] = "style_sheet";
+        $reserved_keys[] = "bgcolor";
+        $reserved_keys[] = "text_color";
+        $reserved_keys[] = "link_color";
+        $reserved_keys[] = "vlink_color";
+        $reserved_keys[] = "alink_color";
+        $reserved_keys[] = "title";
+        $reserved_keys[] = "missing_fields_redirect";
+        $reserved_keys[] = "env_report";
+        $reserved_keys[] = "submit";
+        $content = array();
+        if (count($array)) {
+            if (is_array($sort)) {
+                foreach ($sort as $field) {
+                    $reserved_violation = 0;
+                    for ($ri=0; $ri<count($reserved_keys); $ri++)
+                        if ($array[$field] == $reserved_keys[$ri]) $reserved_violation = 1;
+
+                    if ($reserved_violation != 1) {
+                        if (is_array($array[$field])) {
+                            for ($z=0;$z<count($array[$field]);$z++)
+                                $content[] = array($field,$array[$field][$z]);
+                        } else
+                            $content[] = array($field,$array[$field]);
+                    }
+                }
+            }
+            while (list($key, $val) = each($array)) {
+                $reserved_violation = 0;
+                for ($ri=0; $ri<count($reserved_keys); $ri++)
+                    if ($key == $reserved_keys[$ri]) $reserved_violation = 1;
+
+                for ($ri=0; $ri<count($sort); $ri++)
+                    if ($key == $sort[$ri]) $reserved_violation = 1;
+
+                // prepare content
+                if ($reserved_violation != 1) {
+                    if (is_array($val)) {
+                        for ($z=0;$z<count($val);$z++)
+                            $content[] = array($key,$val[$z]);
+                    } else
+                        $content[] = array($key,$val);
+                }
+            }
+        }
+        $this->content = $content;
+    }
+
+    protected function postMaster($content, $subject, $email, $recipient) {
+        // @TODO - Replace global variables with class variables...
+        global $attachment_chunk, $attachment_name, $attachment_type, $attachment_sent, $bcc;
+
+        $ob = "----=_OuterBoundary_000";
+        $ib = "----=_InnerBoundery_001";
+
+        $headers  = "MIME-Version: 1.0\r\n";
+        if ($recipient=="info@"._TLDDOMAIN) {
+            $email = "info@"._TLDDOMAIN;
+        }
+        $headers .= "From: ".$email."\n";
+        $headers .= "To: ".$recipient."\n";
+        $headers .= "Reply-To: ".$email."\n";
+        if ($bcc) $headers .= "Bcc: ".$bcc."\n";
+        $headers .= "X-Priority: 1\n";
+        $headers .= "X-Mailer: DT Formmail".VERSION."\n";
+        $headers .= "Content-Type: multipart/mixed;\n\tboundary=\"".$ob."\"\n";
+
+
+        $message  = "This is a multi-part message in MIME format.\n";
+        $message .= "\n--".$ob."\n";
+        $message .= "Content-Type: multipart/alternative;\n\tboundary=\"".$ib."\"\n\n";
+        $message .= "\n--".$ib."\n";
+        $message .= "Content-Type: text/plain;\n\tcharset=\"iso-8859-1\"\n";
+        $message .= "Content-Transfer-Encoding: quoted-printable\n\n";
+        $message .= $content."\n\n";
+        $message .= "\n--".$ib."--\n";
+        if ($attachment_name && !$attachment_sent) {
+            $message .= "\n--".$ob."\n";
+            $message .= "Content-Type: $attachment_type;\n\tname=\"".$attachment_name."\"\n";
+            $message .= "Content-Transfer-Encoding: base64\n";
+            $message .= "Content-Disposition: attachment;\n\tfilename=\"".$attachment_name."\"\n\n";
+            $message .= $attachment_chunk;
+            $message .= "\n\n";
+            $attachment_sent = 1;
+        }
+        $message .= "\n--".$ob."--\n";
+
+        mail($recipient, $subject, $message, $headers);
     }
 }

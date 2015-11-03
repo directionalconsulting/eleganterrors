@@ -4,11 +4,8 @@
 		      enctype="application/x-www-form-urlencoded"
 		      action="<!--[$base]-->/<!--[$config->routes->form]-->"
 		      name="<!--[$config->routes->form]-->"
-		      id="<!--[$config->routes->form]-->"
-		      onsubmit="return configureValidation(this,3);"
-		      onreset="confirm(errormsg[99]); reset(); clearForm(this); history.go();">
-			<input type="hidden" name="redirect" value="<!--[$base]-->/thank-you">
-			<input type="hidden" name="elegant" value="<!--[$smarty.session.withClass]-->"
+		      id="contact">
+			<input type="hidden" name="withClass" value="<!--[$smarty.session.withClass]-->">
 			<p>
 			<fieldset>
 				<legend for="problem">Was This The Problem ?</legend>
@@ -74,11 +71,5 @@
 
 			</p>
 		</form>
-		<br>
-		<div id="errordiv">&nbsp;</div>
-		<!--[if $tryagain eq 1]-->
-			<br>
-			<p class="keys">Code entered does not match, try again.</p>
-		<!--[/if]-->
 	</div>
 </div>

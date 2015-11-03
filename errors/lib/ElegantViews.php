@@ -147,8 +147,14 @@ class ElegantViews extends ElegantErrors {
 			if (isset($support['redirect']) && !empty($support['redirect'])) {
 				$this->url = $support['redirect'];
 			}
-			//@TODO - Refactor and package ElegantMail properly to checkForm() and sendForm()
-			//$this->mail = new ElegantMail();
+			if (isset($support['email']) && !empty($support['email'])) {
+				$this->mail->email = $support['email'];
+			}
+			if (isset($support['problem']) && !empty($support['problem'])) {
+				//@TODO - Refactor and package ElegantMail properly to checkForm() and sendForm()
+				ElegantMail::sendMail();
+				die("Whew..");
+			}
 		} else {
 			$support = array();
 		}

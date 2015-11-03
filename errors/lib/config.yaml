@@ -10,7 +10,8 @@ contact:
   email: support@example.com
   cc:
   bcc: developer@example.com
-  domain: example.com
+  referers:
+  banlist:
   slogan: A Basic Example
 # Please do not alter without written consent
 credits:
