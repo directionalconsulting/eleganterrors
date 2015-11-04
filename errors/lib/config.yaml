@@ -1,5 +1,5 @@
 ---
-# DO NOT CHANGE PACKGE NAME
+#TODO - Break config file into multiple files and load sections, codes, routes, contact, etc...
 package: Elegant Errors
 global:
   saveXML: 1
@@ -10,10 +10,12 @@ contact:
   email: support@example.com
   cc:
   bcc: developer@example.com
+  from:
+  reply:
   referers:
   banlist:
   slogan: A Basic Example
-# Please do not alter without written consent
+# Please do not alter credits - project is actively maintained and supported - contact me, thx ;~}
 credits:
   link: https://github.com/directionalconsulting/eleganterrors
   image: elegant.png
@@ -370,7 +372,7 @@ codes:
     reason: Your message has been sent and will be reviewed,
     image:
     retry: 0
-version: 0.3.3
-release: 1445104693052
+version: 0.5.2
+release: 1446642463427
 
 ...

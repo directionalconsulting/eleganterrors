@@ -1,10 +1,22 @@
 <?php
+
 if ( ! defined( '_TLDDOMAIN' ) ) {
     define( '_TLDDOMAIN', $_SERVER['HTTP_HOST'] );
 }
+
+/**
+ * Mail_mime 1.3.0 PEAR stable - very common, proven, reliable!
+ */
+include('Mail.php');
+include('Mail\mime.php');
+
 class ElegantMail extends ElegantErrors {
 
     private $content;
+    private $subject;
+    private $email;
+    private $from;
+    private $reply;
     private $referers;
     private $banlist;
     private $recipient;
@@ -26,9 +38,9 @@ class ElegantMail extends ElegantErrors {
 
         self::parseForm();
 
-        $email = $this->contact->email;
+        $email = $this->content->email;
 
-        $recipient = $this->config->contact->email;
+        $recipient = $this->recipient;
 
         $referers = $this->referers;
 
@@ -86,100 +98,13 @@ class ElegantMail extends ElegantErrors {
             $sort = $list;
         }
 
-        /**
-         * @TODO - Implement attach file(s) option... TBD
-         *
-        // check for an attachment if there is a file upload it
-        if ($attachment_name) {
-            if ($attachment_size > 0) {
-                if (!$attachment_type) $attachment_type =  "application/unknown";
-                $content .= "Attached File: ".$attachment_name."\n";
-                $fp = fopen($attachment,  "r");
-                $attachment_chunk = fread($fp, filesize($attachment));
-                $attachment_chunk = base64_encode($attachment_chunk);
-                $attachment_chunk = chunk_split($attachment_chunk);
-            }
-        }
-
-        // check for a file if there is a file upload it
-        if ($_FILES['file_name']['name']) {
-            if ($_FILES['file_name']['size'] > 0) {
-                if (!ereg("/$", $path_to_file))
-                    $path_to_file = $path_to_file."/";
-                $location = $path_to_file.$_FILES['file_name']['name'];
-                if (file_exists($path_to_file.$_FILES['file_name']['name']))
-                    $location = $path_to_file.rand(1000,3000).".".$_FILES['file_name']['name'];
-                if (is_dir($path_to_file)) {
-                    if(move_uploaded_file($_FILES['file_name']['tmp_name'], $location)) {
-                        $content .= "Uploaded File: ".$location."\n";
-                    } else {
-                        $content .= "Warning: There was a problem with ".$location."\n";
-                    }
-                }
-            }
-        }
-
-        // second file (see manual for instructions on how to add more.)
-        if ($_FILES['file2_name']['name']) {
-            if ($file_size > 0) {
-                if (!ereg("/$", $path_to_file))
-                    $path_to_file = $path_to_file."/";
-                $location = $path_to_file.$_FILES['file2_name']['name'];
-                if (file_exists($path_to_file.$_FILES['file2_name']['name']))
-                    $location = $path_to_file.rand(1000,3000).".".$_FILES['file2_name']['name'];
-                if (is_dir($path_to_file)) {
-                    if(move_uploaded_file($_FILES['file2_name']['tmp_name'], $location)) {
-                        $content .= "Uploaded File: ".$location."\n";
-                    } else {
-                        $content .= "Warning: There was a problem with ".$location."\n";
-                    }
-                }
-            }
-        }
-
-        // third file (see manual for instructions on how to add more.)
-        if ($_FILES['file3_name']['name']) {
-            if ($file_size > 0) {
-                if (!ereg("/$", $path_to_file))
-                    $path_to_file = $path_to_file."/";
-                $location = $path_to_file.$_FILES['file3_name']['name'];
-                if (file_exists($path_to_file.$_FILES['file3_name']['name']))
-                    $location = $path_to_file.rand(1000,3000).".".$_FILES['file3_name']['name'];
-                if (is_dir($path_to_file)) {
-                    if(move_uploaded_file($_FILES['file3_name']['tmp_name'], $location)) {
-                        $content .= "Uploaded File: ".$location."\n";
-                    } else {
-                        $content .= "Warning: There was a problem with ".$location."\n";
-                    }
-
-                }
-            }
-        }
-
-         *
-         * @TODO - Implement withClass environment report :: WIP TBD
-         *
-        // if the env_report option is on: get eviromental variables
-        if ($env_report) {
-            $env_report = ereg_replace( " +", "", $env_report);
-            $env_reports = split(",",$env_report);
-            $content .= "\n------ eviromental variables ------\n";
-            for ($i=0;$i<count($env_reports);$i++) {
-                $string = trim($env_reports[$i]);
-                if ($env_reports[$i] == "REMOTE_HOST")
-                    $content .= "REMOTE HOST: ".$_SERVER['REMOTE_HOST']."\n";
-                if ($env_reports[$i] == "REMOTE_USER")
-                    $content .= "REMOTE USER: ". $_SERVER['REMOTE_USER']."\n";
-                if ($env_reports[$i] == "REMOTE_ADDR")
-                    $content .= "REMOTE ADDR: ". $_SERVER['REMOTE_ADDR']."\n";
-                if ($env_reports[$i] == "HTTP_USER_AGENT")
-                    $content .= "BROWSER: ". $_SERVER['HTTP_USER_AGENT']."\n";
-            }
-        }
-         **/
-        die("Got to here, almost home...");
         // send it off
-        self::postMaster(stripslashes($content), ($subject)?stripslashes($subject):"Form Submission", $email, $recipient);
+        self::postMaster();
+        die("Got to here, almost home...");
+
+        /**
+         * @TODO - Implement autoresponder template... TBD
+         *
         if (file_exists($ar_file)) {
             $fd = fopen($ar_file, "rb");
             $ar_message = fread($fd, filesize($ar_file));
@@ -204,38 +129,37 @@ class ElegantMail extends ElegantErrors {
 
             print_r($_FILES);
         }
+         **/
 
     }
 
-    protected function buildBody($title, $bgcolor, $text_color, $link_color, $vlink_color, $alink_color, $style_sheet) {
-        if ($style_sheet)
-            echo "<link rel=stylesheet href=\"$style_sheet\" type=\"text/css\">\n";
-        if ($title)
-            echo "<title>$title</title>\n";
-        if (!$bgcolor)
-            $bgcolor = "#FFFFFF";
-        if (!$text_color)
-            $text_color = "#000000";
-        if (!$link_color)
-            $link_color = "#0000FF";
-        if (!$vlink_color)
-            $vlink_color = "#FF0000";
-        if (!$alink_color)
-            $alink_color = "#000088";
-        if ($background)
-            $background = "background=\"$background\"";
-        echo "<body bgcolor=\"$bgcolor\" text=\"$text_color\" link=\"$link_color\" vlink=\"$vlink_color\" alink=\"$alink_color\" $background>\n\n";
-    }
+    /**
+     * @TODO - Implement HTML Style options and mail...
+     * @TODO - Replace with LESS...
+     * @deprecated - from old version...
+     * @param $title
+     * @param $bgcolor
+     * @param $text_color
+     * @param $link_color
+     * @param $vlink_color
+     * @param $alink_color
+     * @param $style_sheet
+     *
+    protected function buildBody() {
+     * @TODO - Implement HTML mail...
+       }
+     **/
+
 
     protected function printError($reason,$type = 0) {
         /**
-         * @TODO - Implement HTML options for styling in config and form...
+         * @TODO - Implement HTML options for styling in config and form && REPLACE THIS ERROR DUMP...
          * self::buildBody($title, $bgcolor, $text_color, $link_color, $vlink_color, $alink_color, $style_sheet);
          */
 
         if ($type == "missing") {
             // @TODO - revisit this...
-            if ($missing_field_redirect) {
+            if ($this->missing_field_redirect) {
                 header("Location: $missing_field_redirect?errors=$reason");
                 exit;
             } else {
@@ -304,7 +228,7 @@ class ElegantMail extends ElegantErrors {
         }
     }
 
-    public function parseForm() {
+    protected function parseForm() {
         if (isset($_POST) and !empty($_POST)) {
             $array = $_POST;
         }
@@ -339,9 +263,9 @@ class ElegantMail extends ElegantErrors {
                     if ($reserved_violation != 1) {
                         if (is_array($array[$field])) {
                             for ($z=0;$z<count($array[$field]);$z++)
-                                $content[] = array($field,$array[$field][$z]);
+                                $content[] = array($field=>$array[$field][$z]);
                         } else
-                            $content[] = array($field,$array[$field]);
+                            $content[] = array($field=>$array[$field]);
                     }
                 }
             }
@@ -357,54 +281,58 @@ class ElegantMail extends ElegantErrors {
                 if ($reserved_violation != 1) {
                     if (is_array($val)) {
                         for ($z=0;$z<count($val);$z++)
-                            $content[] = array($key,$val[$z]);
+                            $content[] = array($key=>$val[$z]);
                     } else
-                        $content[] = array($key,$val);
+                        $content[] = array($key=>$val);
                 }
             }
         }
         $this->content = $content;
     }
 
-    protected function postMaster($content, $subject, $email, $recipient) {
-        // @TODO - Replace global variables with class variables...
-        global $attachment_chunk, $attachment_name, $attachment_type, $attachment_sent, $bcc;
+    protected function postMaster() {
 
-        $ob = "----=_OuterBoundary_000";
-        $ib = "----=_InnerBoundery_001";
-
-        $headers  = "MIME-Version: 1.0\r\n";
-        if ($recipient=="info@"._TLDDOMAIN) {
-            $email = "info@"._TLDDOMAIN;
+        $content = ElegantTools::objectToArray($this->content);
+        $message = '';
+        foreach ($content as $pair) {
+            foreach ( $pair as $field => $value ) {
+                $message .= $field . ": " . $value . "\n\n";
+            }
         }
-        $headers .= "From: ".$email."\n";
-        $headers .= "To: ".$recipient."\n";
-        $headers .= "Reply-To: ".$email."\n";
-        if ($bcc) $headers .= "Bcc: ".$bcc."\n";
-        $headers .= "X-Priority: 1\n";
-        $headers .= "X-Mailer: DT Formmail".VERSION."\n";
-        $headers .= "Content-Type: multipart/mixed;\n\tboundary=\"".$ob."\"\n";
 
 
-        $message  = "This is a multi-part message in MIME format.\n";
-        $message .= "\n--".$ob."\n";
-        $message .= "Content-Type: multipart/alternative;\n\tboundary=\"".$ib."\"\n\n";
-        $message .= "\n--".$ib."\n";
-        $message .= "Content-Type: text/plain;\n\tcharset=\"iso-8859-1\"\n";
-        $message .= "Content-Transfer-Encoding: quoted-printable\n\n";
-        $message .= $content."\n\n";
-        $message .= "\n--".$ib."--\n";
-        if ($attachment_name && !$attachment_sent) {
-            $message .= "\n--".$ob."\n";
-            $message .= "Content-Type: $attachment_type;\n\tname=\"".$attachment_name."\"\n";
-            $message .= "Content-Transfer-Encoding: base64\n";
-            $message .= "Content-Disposition: attachment;\n\tfilename=\"".$attachment_name."\"\n\n";
-            $message .= $attachment_chunk;
-            $message .= "\n\n";
-            $attachment_sent = 1;
-        }
-        $message .= "\n--".$ob."--\n";
+        $to = $this->config->contact->email;
 
-        mail($recipient, $subject, $message, $headers);
+        $text = $message;
+        //@TODO - Add formatting for HTML Version of Email with table layout of values...
+//        $html = '<html><body>HTML version of email</body></html>';
+        //@TODO Add log attachment options for captuting rich data...
+//        $file = '/errors/....log';
+
+        $crlf = "\n";
+
+        $headers = array(
+            // Use test conditions...
+        );
+        if ($this->contact->from) $headers[] = array("From: "=>$this->contact->from);
+        if ($this->contact->reply_to) $headers[] = array("Reply-To: "=>$this->contact->reply_to);
+        if ($this->contact->cc) $headers[] = array("Cc: "=>$this->contact->cc);
+        if ($this->contact->bcc) $headers[] = array("Bcc: "=>$this->contact->bcc);
+        if ($this->contact->subject) $headers[] = array("Subject: "=>$this->contact->subject);
+
+        $mime = new Mail_mime(array('eol' => $crlf));
+
+        $mime->setTXTBody($text);
+//        $mime->setHTMLBody($html);
+//        $mime->addAttachment($file, 'text/plain');
+
+        $body = $mime->get();
+        $headers = $mime->headers($headers);
+
+        $mail =& Mail::factory('mail');
+        // TESTING...
+        die(var_dump($mail));
+        $mail->send($to, $headers, $body);
+
     }
 }

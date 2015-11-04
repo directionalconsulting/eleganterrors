@@ -102,6 +102,7 @@ class ElegantViews extends ElegantErrors {
 
 	public function renderView() {
 
+		//@TODO - Implment LESS options for main & side columns + color alerts...
 		// Load and execute leafo/lessphp
 		require_once('lessc.inc.php');
 		$less = new lessc;
@@ -153,7 +154,6 @@ class ElegantViews extends ElegantErrors {
 			if (isset($support['problem']) && !empty($support['problem'])) {
 				//@TODO - Refactor and package ElegantMail properly to checkForm() and sendForm()
 				ElegantMail::sendMail();
-				die("Whew..");
 			}
 		} else {
 			$support = array();
