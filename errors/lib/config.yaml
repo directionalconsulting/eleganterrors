@@ -9,12 +9,21 @@ global:
 contact:
   email: support@example.com
   cc:
+  host: example.com
   bcc: developer@example.com
-  from:
-  reply:
+  from: errors@example.com
+  reply_to:
   referers:
+    - localhost
+    - eleganterrors
   banlist:
+    -
   slogan: A Basic Example
+#  username: webmaster@example.com
+#  password:
+#  mailhost: localhost
+#  port: 25
+#  auth: false
 # Please do not alter credits - project is actively maintained and supported - contact me, thx ;~}
 credits:
   link: https://github.com/directionalconsulting/eleganterrors
@@ -354,25 +363,7 @@ codes:
     reason:
     image:
     retry: 0
-# Credits
-  1110:
-    response: Elegant Errors
-    reason: Because it's a mistake to excuse errors without class,
-    image: elegant.png
-    retry: 0
-# Contact Support
-  1120:
-    response: Contact Support
-    reason: Let us know what happenned, we will look into it,
-    image:
-    retry: 0
-# Message Sent
-  1130:
-    response: Thank You
-    reason: Your message has been sent and will be reviewed,
-    image:
-    retry: 0
-version: 0.5.2
-release: 1446642463427
+version: 0.6.3
+release: 1446720964201
 
 ...

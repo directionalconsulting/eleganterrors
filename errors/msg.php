@@ -45,6 +45,10 @@ require_once(_LIB.'debug.inc.php');
 //apache_setenv('EE_DIR', _BASE."/");
 
 function pathfinder() {
+
+//	Optional if PHP is not properly configured... - just add to $paths array()
+//	$pear = exec('pear config-get php_dir');
+
 	$libs = explode(PATH_SEPARATOR, get_include_path());
 	$dirs = array(_SMARTY,_VENDOR,_LIB);
 	$apis = array();
@@ -77,6 +81,10 @@ function pathfinder() {
 pathfinder();
 // Load Elegant Errors libraries...
 require('ElegantErrors.php');
+
+
+//require('Mail.php');
+//require('Mail\mime.php');
 
 // GO -->
 $elegance = new ElegantErrors();

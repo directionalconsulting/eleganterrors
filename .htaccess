@@ -7,15 +7,15 @@
 <IfModule mod_rewrite.c>
 	RewriteEngine On
 	RewriteBase /
+	RewriteRule ^errors/lib/ - [F,L]
+	RewriteRule ^errors/support$ /errors/msg.php [L]
+	RewriteRule ^errors/thank-you$ /errors/msg.php [L]
+	RewriteRule ^errors/credits$ /errors/msg.php [L]
+	RewriteCond %{ENV:REDIRECT_STATUS} =505
+	RewriteRule ^$ /errors/msg.php?c=505 [L]
 	RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^errors/(.*?)$ /errors/msg.php [L]
-	RewriteRule ^errors/lib/ - [F,L]
-	RewriteRule ^errors/contact$ /errors/msg.php?c=1120 [L]
-	RewriteRule ^errors/thank-you$ /errors/msg.php?c=1130 [L]
-	RewriteRule ^errors/credits$ /errors/msg.php?c=1110 [L]
-	RewriteCond %{ENV:REDIRECT_STATUS} =505
-	RewriteRule ^$ /errors/msg.php?c=505
 </IfModule>
 
 ##

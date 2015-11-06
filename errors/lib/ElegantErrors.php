@@ -167,7 +167,7 @@ class ElegantErrors {
 
 		// Save all the posted values as XML for now...
 		// @TODO - FixMe... arrayToXML needs CDATA encapsulation
-//		$posted = $this->tools->arrayToXML($_POST);
+		// $posted = $this->tools->arrayToXML($_POST);
 
 		$this->env->addr = $_SERVER['REMOTE_ADDR'];
 		$this->env->agent = $_SERVER['HTTP_USER_AGENT'];
@@ -177,26 +177,23 @@ class ElegantErrors {
 		$this->env->host = $_SERVER['HTTP_HOST'];
 
 		// Initialize and add to the history array of URLs visited before the crash...
-		$history = array();
 		if (isset($_SESSION['withClass']) && !empty($_SESSION['withClass'])) {
-			$json = base64_decode($_SESSION['withClass']);
-			$payload = unserialize($json);
+			$payload = ElegantTools::redCarpet($_SESSION['withClass'],'decode');
 			$history = unserialize($payload['HISTORY']);
-			array_push($history,$this->env->referrer);
+			array_push($history,array($this->env->time, $this->env->request, $this->env->referrer));
+		} else {
+			$history = array($this->env->time, $this->env->request, $this->env->referrer);
 		}
-		$json = serialize(
-			array(
-				'HTTP_STATUS'=>$this->code,
-				'REMOTE_ADDR'=>$this->env->addr,
-				'USER_AGENT'=>$this->env->agent,
-				'HISTORY'=>serialize($history),
-				'REQUEST_URI'=>$this->env->request,
-				'REQUEST_TIME'=>$this->env->time,
-				'HTTP_HOST'=>$this->env->host
-			)
-		);
-		$_SESSION['withClass'] = base64_encode($json);
-		$this->env->json = $json;
+		// Complete the payload and ready for the redCarpet...
+		$payload['HISTORY'] = serialize($history);
+		$payload['HTTP_STATUS']  = $this->code;
+		$payload['REMOTE_ADDR'] = $this->env->addr;
+		$payload['USER_AGENT'] = $this->env->agent;
+		$payload['REQUEST_TIME'] = $this->env->time;
+		$payload['HTTP_HOST'] = $this->env->host;
+
+		$_SESSION['withClass']  = $withClass = ElegantTools::redCarpet($payload,'encode');
+		$this->env->withClass= $withClass;
 
 	}
 

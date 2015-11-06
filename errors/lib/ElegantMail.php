@@ -5,10 +5,16 @@ if ( ! defined( '_TLDDOMAIN' ) ) {
 }
 
 /**
- * Mail_mime 1.3.0 PEAR stable - very common, proven, reliable!
+ * PEAR libraries :: stable - very common, proven, reliable!
+ *
+ * Mail 1.2.0
+ * Mail_mime 1.3.0
+ * Net_SMTP 1.7.0
+ *
  */
-include('Mail.php');
-include('Mail\mime.php');
+require_once('Mail.php');
+require_once('Mail/mime.php');
+require_once('Net/SMTP.php');
 
 class ElegantMail extends ElegantErrors {
 
@@ -264,8 +270,10 @@ class ElegantMail extends ElegantErrors {
                         if (is_array($array[$field])) {
                             for ($z=0;$z<count($array[$field]);$z++)
                                 $content[] = array($field=>$array[$field][$z]);
+                                $this->content->$field = $array[$field][$z];
                         } else
                             $content[] = array($field=>$array[$field]);
+                        $this->content->$field = $array[$field];
                     }
                 }
             }
@@ -282,15 +290,18 @@ class ElegantMail extends ElegantErrors {
                     if (is_array($val)) {
                         for ($z=0;$z<count($val);$z++)
                             $content[] = array($key=>$val[$z]);
+                            $this->content->$key = $val[$z];
                     } else
                         $content[] = array($key=>$val);
+                        $this->content->$key = $val;
                 }
             }
         }
-        $this->content = $content;
+//        $this->content = $content;
     }
 
     protected function postMaster() {
+
 
         $content = ElegantTools::objectToArray($this->content);
         $message = '';
@@ -299,9 +310,7 @@ class ElegantMail extends ElegantErrors {
                 $message .= $field . ": " . $value . "\n\n";
             }
         }
-
-
-        $to = $this->config->contact->email;
+//        die(var_dump($message));
 
         $text = $message;
         //@TODO - Add formatting for HTML Version of Email with table layout of values...
@@ -311,28 +320,64 @@ class ElegantMail extends ElegantErrors {
 
         $crlf = "\n";
 
+        // Set mail headers for message...
         $headers = array(
             // Use test conditions...
         );
-        if ($this->contact->from) $headers[] = array("From: "=>$this->contact->from);
-        if ($this->contact->reply_to) $headers[] = array("Reply-To: "=>$this->contact->reply_to);
-        if ($this->contact->cc) $headers[] = array("Cc: "=>$this->contact->cc);
-        if ($this->contact->bcc) $headers[] = array("Bcc: "=>$this->contact->bcc);
-        if ($this->contact->subject) $headers[] = array("Subject: "=>$this->contact->subject);
 
-        $mime = new Mail_mime(array('eol' => $crlf));
+        $to = $this->config->contact->email;
+
+        if (!empty($this->config->contact->from)) {
+            $headers[] = array("From"=>$this->config->contact->from);
+        } else {
+            $headers[] = array("From"=>str_replace(' ','_',strtolower($this->config->package))."@".$this->config->contact->host);
+        }
+        if ($this->config->contact->reply_to) $headers[] = array("Reply-To "=>$this->config->contact->reply_to);
+        if ($this->config->contact->cc) $headers[] = array("Cc"=>$this->config->contact->cc);
+        if ($this->config->contact->bcc) $headers[] = array("Bcc"=>$this->config->contact->bcc);
+        if ($this->config->contact->subject) {
+            $headers[] = array( "Subject" => $this->config->contact->subject );
+        } else {
+            //@TODO - Implement Elegance enc/dec f(x)...
+            $withClass = ElegantTools::redCarpet($this->content->withClass,'decode');
+	        die(var_dump($withClass));
+            $subject = $elegance->code . " - " . $elegance->status->response;
+//            $subject = "TESTING... ELEGANT ERRORS --- PLEASE STAND-BY...";
+            $headers[] = array( "Subject" => $subject );
+        }
+
+        die(var_dump($headers));
+
+        // Construct MIME mail msg...
+        $mime = new Mail_Mime(array('eol' => $crlf));
 
         $mime->setTXTBody($text);
 //        $mime->setHTMLBody($html);
 //        $mime->addAttachment($file, 'text/plain');
 
-        $body = $mime->get();
+        $body = $mime->get(array('text_charset' => 'utf-8'));
         $headers = $mime->headers($headers);
 
-        $mail =& Mail::factory('mail');
-        // TESTING...
-        die(var_dump($mail));
-        $mail->send($to, $headers, $body);
+        // Construct SMTP mail factory and send it...
+        $smtp = Mail::factory('smtp',
+            array(
+                'host' => $this->config->contact->host,
+                'port' => $this->config->contact->port,
+                'auth' => $this->config->contact->auth,
+                'username' => $this->config->contact->username,
+                'password' => $this->config->contact->password));
+
+//        die(var_dump($smtp));
+
+        $mail = $smtp->send($to, $headers, $body);
+
+
+        if (PEAR::isError($mail)) {
+            echo $mail->getMessage();
+        } else {
+            echo "Message sent successfully!";
+        }
+        echo "\n";
 
     }
 }

@@ -8,7 +8,6 @@
  * Time: 12:46 PM
  */
 
-
 class ElegantViews extends ElegantErrors {
 
 	function __construct(

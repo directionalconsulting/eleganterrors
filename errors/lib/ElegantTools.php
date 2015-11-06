@@ -93,6 +93,20 @@ class ElegantTools extends ElegantErrors {
 		return json_decode($contents);
 	}
 
+	public function redCarpet($contents,$action) {
+		switch ($action) {
+			case 'decode':
+				$data = unserialize(base64_decode($contents));
+				break;
+			case 'encode':
+				$data = base64_encode(serialize($contents));
+				break;
+			default:
+				$data = false;
+		}
+		return $data;
+	}
+
 	public function objectToArray($data = null) {
 
 		if (is_array($data) || is_object($data))
