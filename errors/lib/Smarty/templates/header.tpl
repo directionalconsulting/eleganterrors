@@ -1,7 +1,7 @@
 	<head>
 		<title><!--[$config->title]--></title>
 <!--[include file="meta.tpl"]-->
-		<link rel="stylesheet" href="<!--[$base]-->/assets/css/reset.css" type="text/css" media="screen" />
+		<!-- link rel="stylesheet" href="<!--[$base]-->/assets/css/reset.css" type="text/css" media="screen" / -->
 		<link rel="stylesheet" href="<!--[$base]-->/assets/css/styles.css" type="text/css" media="screen" />
 		<!--[if $config->global->background ne '']-->
 			<style type="text/css">

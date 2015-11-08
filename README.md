@@ -2,7 +2,7 @@
 
 ### HTTP Status Codes & ErrorDocument directives with customizable templates and built in contact form
 
-> Because it's a mistake to excuse errors without class
+> Oops... a server error occurred, not without class!
 
 We've all seen the very blank and less than helpful standard *404 Page Not Found* or the occasional *500 Internal Server Error* when things really have gone wrong.
  
@@ -16,8 +16,9 @@ __>> Website maintainers <u>please change the contact email</u> in the config.ya
 
 <span style="font-size:75%;"> __PRODUCTION SERVERS:__ Generate __config.json__ prior to uploading with [PECL YAML](http://php.net/manual/en/book.yaml.php), DO NOT manually edit the file.</span>
 
+# Installation
 
-## Installation
+Checkout or download the zip to get the files into a working directory.  Make sure you have the requirements installed.  Then ```cd``` into the working directory and type ```composer update``` to bring all the required vendor bundles up to date.
 
 Copy the required directives the root level **.htaccess** file into your website's main folder <u>.htaccess</u> in order to enable the __ErrorDocument__ and __RewriteRule__ directives required for __ElegantErrors__ to operate properly.
 
@@ -25,6 +26,15 @@ Copy the required directives the root level **.htaccess** file into your website
 + __RewriteRules -__ *anything referencing __errors__ folder*
 + __DirectoryIndex -__ *only if your .htaccess file <u>does not</u> already have this directive*
 + __All Other Rules -__ *<u>optional</u>: collected over time, use if desired and please comment...*
+
+## Requirements
+
++ PHP 5.3+
++ PECL YAML
++ PEAR phpDocumentor
++ Composer
++ Apache 2.2.+
++ Linux (tested on Ubuntu Trusty)
 
 ## Removal
 
@@ -55,12 +65,11 @@ Features TBD, got notes, just need time...
 + Background Images - *multiple folders with random per page load using one or all folders*
 + Auth - *remote authentication for changing config setting options*
 + Service Codes - *service codes for operator modes similar to 411, 511, 611, 811, 911, etc...*
-+ Holiday Msgs - *holiday messages using 10xx (4 digit) codes*
++ Holiday Msgs - *holiday messages using 98x ~ 999 codes*
 + Redirect Countdown - *JS countdown timeout for redirection of URL with 3xx codes*
 + Logging - *$_SESSION history of URLs visited preceeding the status code response page*
++ Config - *split into multiple sectional files to simplify editing, codes, routes, contact, etc...*
 + Database - *abstraction layer for MySQL, PostgreSQL, MongoDB, InfluxDB, sqlite3, etc...*
 + Dashboard - *view logs, status codes and history patterns by URL plus change config options*
 + Tests - *PHPUnit, Mess Detector and Code Coverage for classes, modules, routes, configs, etc...*
 + Packaging - *Composer vendor library with all assets required for inclusion in composer.json file*
-
-  

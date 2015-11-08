@@ -124,13 +124,36 @@ routes:
   credits: credits
   sent: thank-you
   form: support
+  demo: demo
 codes:
+# [00x] - Single Digit Significant Numbers (Very Reserved)
+# Think about it --> The Unity of the One, or 8 is great since it's a binary triplet, think hard before making commit ;)
+# @TODO - Find more universally siginificance in single digit numbers and consensus on the internet with images...
+  7:
+    response: Licensed To Kill
+    reason:  Licence to kill in the field, at agent's discretion, to complete the mission granted,
+    image: licensed_to_kill.jpg
+    retry: 0
+# [0xx] :: Double Digit Universally accepted numerically significant pairs...
+# @TODO - 86 - Removed From The Menu :: 21 - Blackjack You're a Winner OR Have A Drink! :: 18 - Barely Legal
+  42:
+    response: Don't Panic
+    reason: Answer to The Ultimate Question of Life, the Universe, and Everything<br />Calculating precise details requires <a href="https://en.wikipedia.org/wiki/Phrases_from_The_Hitchhiker%27s_Guide_to_the_Galaxy#Answer_to_the_Ultimate_Question_of_Life.2C_the_Universe.2C_and_Everything_.2842.29" rel="nofollow">Deep Thought</a>,
+    image: the_hitchhikers_guide_to_the_galaxy.jpg
+    retry: 7862400
+  69:
+    response: What number are we thinking of...?
+    reason: Surprisingly simple idea,
+    image: 69.jpg
+    retry: 0
 # 1xx Informational
   100:
-    response:
-    reason:
-    image:
-    retry:
+    response: Continue
+    reason: |-
+      The server has received the request headers and<br />
+      the client should proceed to send the request body,
+    image: continue.png
+    retry: 0
 # 2xx Success
   200:
     response: OK
@@ -276,94 +299,74 @@ codes:
 # [6xx - 9xx] :: Service Codes similiar to ANAC Numbers...
 # @TODO - 611, 811, 911 (Reserved :: TBD...)
 #
-# [0xx] :: Double Digit Universally accepted numerically significant pairs...
-# @TODO - 86 - Removed From The Menu :: 21 - Blackjack You're a Winner OR Have A Drink! :: 18 - Barely Legal
-  42:
-    response: Don't Panic
-    reason: Answer to The Ultimate Question of Life, the Universe, and Everything<br />Calculating precise details requires <a href="https://en.wikipedia.org/wiki/Phrases_from_The_Hitchhiker%27s_Guide_to_the_Galaxy#Answer_to_the_Ultimate_Question_of_Life.2C_the_Universe.2C_and_Everything_.2842.29" rel="nofollow">Deep Thought</a>,
-    image: the_hitchhikers_guide_to_the_galaxy.jpg
-    retry: 7862400
-  69:
-    response: What number are we thinking of...?
-    reason: Surprisingly simple idea,
-    image: 69.jpg
-    retry: 0
-# [00x] - Single Digit Significant Numbers (Very Reserved)
-# Think about it --> The Unity of the One, or 8 is great since it's a binary triplet, think hard before making commit ;)
-# @TODO - Find more universally siginificance in single digit numbers and consensus on the internet with images...
-  7:
-    response: Licensed To Kill
-    reason:  Licence to kill in the field, at agent's discretion, to complete the mission granted,
-    image: licensed_to_kill.jpg
-    retry: 0
 # Public Holiday Messages
 # @TODO - Create more images and codes, fill in this section as it works now...
-  1000:
+  980:
     response: New Year's Day
     reason:
     image:
     retry: 0
-  1001:
+  981:
     response: Birthday of Martin Luther King, Jr.
     reason:
     image:
     retry: 0
-  1002:
+  982:
     response: President's Day
     reason:
     image:
     retry: 0
-  1003:
+  983:
     response: Memorial Day
     reason:
     image:
     retry: 0
-  1004:
+  984:
     response: Independenace Day
     reason:
     image:
     retry: 0
-  1005:
+  985:
     response: Labor Day
     reason:
     image:
     retry: 0
-  1006:
+  986:
     response: Columbus Day
     reason:
     image:
     retry: 0
-  1007:
+  987:
     response: Verterans Day
     reason:
     image:
     retry: 0
-  1008:
+  988:
     response: Happy Thanksgiving!
     reason: It's hard to soar with the eagles, when you're surrounded by turkeys,
     image: thanksgiving.png
     retry: 3600
-  1009:
+  989:
     response: Merry Christmas
     reason:
     image:
     retry: 0
-  1010:
+  990:
     response: Happy Valentine's
     reason:
     image:
     retry: 0
-  1011:
+  991:
     response: St. Patrick's Day
     reason:
     image:
     retry: 0
-  1012:
+  992:
     response: Happy Halloween
     reason:
     image:
     retry: 0
-version: 0.6.3
-release: 1446720964201
+version: 0.7.1
+release: 1447020611907
 
 ...

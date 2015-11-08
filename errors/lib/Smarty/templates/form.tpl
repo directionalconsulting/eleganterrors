@@ -16,7 +16,9 @@
 				</p>
 				<p>
 					<label>Server Error
-						<textarea id="problem" name="problem" placeholder="<!--[$status->code]-->"></textarea>
+						<textarea id="problem" name="problem">
+							<!--[$code]--> - <!--[$status->response]-->
+						</textarea>
 					</label>
 				</p>
 			</fieldset>

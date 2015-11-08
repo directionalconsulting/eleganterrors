@@ -2,12 +2,13 @@
 /**
  * @package ElegantErrors
  * @description  HTTP Status Codes & ErrorDocument directives with customizable templates and built in contact form
- * @author Gordon Hackett - Directional-Consulting
+ * @author Gordon Hackett
  * @created 2015-10-02 15:03:17
  * @version 0.4.1
  * @updated 2015-10-20 14:05:20
  * @timestamp 1445375125617
- * 
+ * @copyright 2015 Gordon Hackett :: Directional-Consulting.com
+ *
  * This file is part of ElegantErrors.
  * 
  * ElegantErrors is free software: you can redistribute it and/or modify

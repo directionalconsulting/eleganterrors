@@ -1,12 +1,30 @@
 <?php
-
 /**
- * Created by PhpStorm
- * Project: eleganterrors
- * User: gman
- * Date: 11/1/15
- * Time: 12:46 PM
- */
+ * @package ElegantErrors
+ * @description  HTTP Status Codes & ErrorDocument directives with customizable templates and built in contact form
+ * @author Gordon Hackett
+ * @created 2015-10-02 15:03:17
+ * @version 0.7.2
+ * @updated 2015-11-08 13:38:13
+ * @timestamp 1447018698859
+ * @copyright 2015 Gordon Hackett :: Directional-Consulting.com
+ *
+ * This file is part of ElegantErrors.
+ *
+ * ElegantErrors is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ElegantErrors is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ElegantErrors.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ **/
 
 class ElegantViews extends ElegantErrors {
 
@@ -34,7 +52,7 @@ class ElegantViews extends ElegantErrors {
 				}
 
 				// Check the second param, error code
-				if (preg_match('%\d{1,4}%',$match) && $i == 1) {
+				if (preg_match('%\d{1,3}%',$match) && $i == 1) {
 					$this->code = (int) $match;
 				}
 
@@ -57,7 +75,7 @@ class ElegantViews extends ElegantErrors {
 			// $_GET['c'] found, so let's use those params...
 		} else {
 			// Set the code if an integer is found...
-			if ( isset( $_GET['c'] ) && preg_match( '%\d{1,4}%', $_GET['c'] ) ) {
+			if ( isset( $_GET['c'] ) && preg_match( '%\d{1,3}%', $_GET['c'] ) ) {
 				$this->code = (int) $_GET['c'];
 			}
 

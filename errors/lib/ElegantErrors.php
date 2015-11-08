@@ -1,16 +1,31 @@
 <?php
 /**
- * Created by PhpStorm
- * Project: eleganterrors
- * User: gman
- * Date: 11/1/15
- * Time: 12:41 PM
- */
-/**
- * Class ElegantErrors
+ * @package ElegantErrors
+ * @description  HTTP Status Codes & ErrorDocument directives with customizable templates and built in contact form
+ * @author Gordon Hackett
+ * @created 2015-10-02 15:03:17
+ * @version 0.8.1
+ * @updated 2015-11-08 13:35:20
+ * @timestamp 1447018527410
+ * @copyright 2015 Gordon Hackett :: Directional-Consulting.com
  *
- * Error code status as passed by Apache Server using ElegantErrors directives in .htaccess file or PHP by system or user controlled trigger_error statements within try & catch Exception blocks of code
- */
+ * This file is part of ElegantErrors.
+ *
+ * ElegantErrors is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ElegantErrors is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ElegantErrors.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ **/
+
 require('ElegantTimer.php');
 require('ElegantTools.php');
 require('ElegantViews.php');
@@ -190,7 +205,7 @@ class ElegantErrors {
 
 		// Initialize and add to the history array of URLs visited before the crash...
 		if (isset($_SESSION['withClass']) && !empty($_SESSION['withClass'])) {
-			$payload = ElegantTools::redCarpet($_SESSION['withClass'],'decode');
+			$history = ElegantTools::redCarpet($_SESSION['withClass'],'decode');
 			$history = unserialize($payload['HISTORY']);
 			array_push($history,array($this->env->time, $this->env->request, $this->env->referrer));
 		} else {

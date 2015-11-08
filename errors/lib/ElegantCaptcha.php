@@ -1,4 +1,31 @@
 <?php
+/**
+ * @package ElegantErrors
+ * @subpackage ElegantCaptcha
+ * @description  HTTP Status Codes & ErrorDocument directives with customizable templates and built in contact form
+ * @author Gordon Hackett
+ * @created 2015-10-02 15:03:17
+ * @version 0.4.1
+ * @updated 2015-11-08 13:40:37
+ * @timestamp 1447018842891
+ * @copyright 2015 Gordon Hackett :: Directional-Consulting.com
+ *
+ * This file is part of ElegantErrors.
+ *
+ * ElegantErrors is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ElegantErrors is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ElegantErrors.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ **/
 class ElegantCaptcha extends ElegantErrors {
 
     function __construct(ElegantErrors $elegantErrors) {}
