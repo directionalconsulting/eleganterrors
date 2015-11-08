@@ -10,10 +10,16 @@
     }
   ],
   "require": {
+    "leafo/lessphp": "0.4.*",
+    "egulias/email-validator": "1.2.*"
+  },
+  "require-dev": {
+    "phpdocumentor/phpdocumentor": "2.*",
     "phpunit/phpunit": "4.8.*",
     "phpunit/php-code-coverage": "2.2.*",
     "phpmd/phpmd": "2.2.*",
-    "leafo/lessphp": "0.4.*",
-    "pimple/pimple": "~3.0"
+    "php-console/php-console": "3.1.*",
+    "pimple/pimple": ">1.0",
+    "dompdf/dompdf": "dev-master"
   }
 }

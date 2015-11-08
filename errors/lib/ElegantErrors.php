@@ -55,12 +55,12 @@ class ElegantErrors {
 
 	public function withClass() {
 
-//		die("BEGIN... FIGHT!");
 		// Parse config.yaml and preload all status codes, etc...
 		ElegantTools::loadConfig();
 
 		// Get & Set $_SESSION variables for better error reporting...
-		$this->getHistory();
+		//@TODO - Implement hooks for WordPress, Drupal & MVCs for ->eventTimeline() aka $_SESSION['HISTORY'] ->withClass()
+		$this->eventTimeline();
 
 		// Find a route from config file...
 		ElegantViews::getRoute();
@@ -162,7 +162,12 @@ class ElegantErrors {
 		}
 	}
 
-	protected function getHistory() {
+	private function session_valid_id($session_id)
+	{
+		return preg_match('/^[-,a-zA-Z0-9]{1,128}$/', $session_id) > 0;
+	}
+
+	public function eventTimeline() {
 		// @TODO - Add (?? PostreSQL / MySQL / InfluxDB / Mongo ??) for data tracking and health monitoring...
 
 		// Save all the posted values as XML for now...
@@ -175,6 +180,13 @@ class ElegantErrors {
 		$this->env->request = $_SERVER['REQUEST_URI'];
 		$this->env->time = $_SERVER['REQUEST_TIME'];
 		$this->env->host = $_SERVER['HTTP_HOST'];
+
+		if (self::session_valid_id(session_id()) === false) {
+			session_start();
+		}
+
+		$sid = session_id();
+		$same = session_name();
 
 		// Initialize and add to the history array of URLs visited before the crash...
 		if (isset($_SESSION['withClass']) && !empty($_SESSION['withClass'])) {
