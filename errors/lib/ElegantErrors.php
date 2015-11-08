@@ -25,17 +25,15 @@
  * along with ElegantErrors.  If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-
 require('ElegantTimer.php');
 require('ElegantTools.php');
-require('ElegantViews.php');
-require('ElegantCaptcha.php');
 require('ElegantMail.php');
-
+require('ElegantCaptcha.php');
+require('ElegantViews.php');
 
 class ElegantErrors {
 
-	public $code = 520;
+	public $code = 200;
 
 	public $url;
 
@@ -103,7 +101,7 @@ class ElegantErrors {
 		if (is_object($this->config->codes->$code)) {
 			$this->status = $this->config->codes->$code;
 		} else {
-			$this->code = 520;  // Since the key does not exist, 520 - Unknown Reason
+			$this->code = 200;
 			$this->status = $this->config->codes->$code;
 		}
 		$this->status->credits = 0;
@@ -196,7 +194,7 @@ class ElegantErrors {
 		$this->env->time = $_SERVER['REQUEST_TIME'];
 		$this->env->host = $_SERVER['HTTP_HOST'];
 
-		if (self::session_valid_id(session_id()) === false) {
+		if ($this->session_valid_id(session_id()) === false) {
 			session_start();
 		}
 
@@ -205,7 +203,7 @@ class ElegantErrors {
 
 		// Initialize and add to the history array of URLs visited before the crash...
 		if (isset($_SESSION['withClass']) && !empty($_SESSION['withClass'])) {
-			$history = ElegantTools::redCarpet($_SESSION['withClass'],'decode');
+			$payload = ElegantTools::redCarpet($_SESSION['withClass'],'decode');
 			$history = unserialize($payload['HISTORY']);
 			array_push($history,array($this->env->time, $this->env->request, $this->env->referrer));
 		} else {

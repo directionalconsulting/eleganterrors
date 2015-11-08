@@ -121,15 +121,15 @@ class ElegantViews extends ElegantErrors {
 
 		//@TODO - Implment LESS options for main & side columns + color alerts...
 		// Load and execute leafo/lessphp
-		require_once('lessc.inc.php');
-		$less = new lessc;
+//		require_once('lessc.inc.php');
+//		$less = new lessc;
 		// @see - http://leafo.net/lessphp/docs/#setting_variables_from_php
-		$less->setVariables(array(
-			"color" => "red",
-			"base" => "960px"
-		));
+//		$less->setVariables(array(
+//			"color" => "red",
+//			"base" => "960px"
+//		));
 
-		$less->checkedCompile('assets/css/stlyes.less', 'assets/css/styles.css');
+//		$less->checkedCompile('assets/css/stlyes.less', 'assets/css/styles.css');
 
 		// Load Smarty class using config file and create $smarty instance...
 		require_once('smarty.inc.php');

@@ -47,8 +47,6 @@ require_once(_LIB.'debug.inc.php');
 
 function pathfinder() {
 
-//	Optional if PHP is not properly configured... - just add to $paths array()
-//	$pear = exec('pear config-get php_dir');
 
 	$libs = explode(PATH_SEPARATOR, get_include_path());
 	$dirs = array(_SMARTY,_VENDOR,_LIB);
@@ -80,12 +78,13 @@ function pathfinder() {
 
 // Get/Set the library include paths for SPL Autoloader...
 pathfinder();
+
+$pear = dirname(dirname(dirname(__DIR__))).DIRECTORY_SEPARATOR.'php';
+
+ini_set("include_path", $pear.':./vendor/leafo/lessphp:./lib:./lib/Smarty:' . ini_get("include_path") );
+
 // Load Elegant Errors libraries...
 require('ElegantErrors.php');
-
-
-//require('Mail.php');
-//require('Mail\mime.php');
 
 // GO -->
 $elegance = new ElegantErrors();
