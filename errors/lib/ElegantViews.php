@@ -119,24 +119,42 @@ class ElegantViews extends ElegantErrors {
 
 	public function renderView() {
 
-		//@TODO - Implment LESS options for main & side columns + color alerts...
-		// Load and execute leafo/lessphp
-//		require_once('lessc.inc.php');
-//		$less = new lessc;
-		// @see - http://leafo.net/lessphp/docs/#setting_variables_from_php
-//		$less->setVariables(array(
-//			"color" => "red",
-//			"base" => "960px"
-//		));
-
-//		$less->checkedCompile('assets/css/stlyes.less', 'assets/css/styles.css');
-
 		// Load Smarty class using config file and create $smarty instance...
 		require_once('smarty.inc.php');
 
 		// Make certain $smarty is initialized before we compile, if not throw error and abort!
 		if (!isset($smarty)) trigger_error('Failed to load '._SMARTY.'smarty.inc.php in '.__FUNCTION__, E_ERROR);
+/**
+ *
+ *
+		//@TODO - Implment LESS options for main & side columns + color alerts...
+		// Load and execute leafo/lessphp
+		require_once('lessc.inc.php');
+		$less = new lessc;
+		//@see - http://leafo.net/lessphp/docs/#setting_variables_from_php
+**/
+		switch ($this->route) {
+			case 'errors':
+				$mainWidth = '85%';
+				$sideWidth = '0';
+				break;
+			default:
+				$mainWidth = '45%';
+				$sideWidth = '15%';
+		}
+/**
+ *
+ *
+		$less->setVariables(array(
+			"mainWidth" => $mainWidth,
+			"sideWidth" => $sideWidth
+		));
 
+//		$less->compile('#maincol { width: @mainWidth }');
+//		$less->compile('#leftcol, #rightcol { width: @sideWidth }');
+		$less->compileFile('assets/css/stlyes.less', 'assets/css/custom.css');
+//		$less->cachedCompile('assets/css/stlyes.less',true);
+**/
 		// The clock is still running...
 		$smarty->assign('ElegantTimer', $this->timer);
 
@@ -153,6 +171,10 @@ class ElegantViews extends ElegantErrors {
 		$smarty->assign('status',$this->status);
 		$smarty->assign('url',$this->url);
 		$smarty->assign('code',$this->code);
+
+		//@TODO - FixMe... --- LESS caching issue with forwards & back, not working...
+		$smarty->assign('mainWidth',$mainWidth);
+		$smarty->assign('sideWidth',$sideWidth);
 
 		// Credits columns or ... ???
 		$smarty->assign('rightcol',ElegantTools::objectToArray($this->config->credits->right));

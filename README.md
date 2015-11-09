@@ -16,30 +16,51 @@ __>> Website maintainers <u>please change the contact email</u> in the config.ya
 
 <span style="font-size:75%;"> __PRODUCTION SERVERS:__ Generate __config.json__ prior to uploading with [PECL YAML](http://php.net/manual/en/book.yaml.php), DO NOT manually edit the file.</span>
 
-# Installation
-
-Checkout or download the zip to get the files into a working directory.  Make sure you have the requirements installed.  Then ```cd``` into the working directory and type ```composer update``` to bring all the required vendor bundles up to date.
-
-Copy the required directives the root level **.htaccess** file into your website's main folder <u>.htaccess</u> in order to enable the __ErrorDocument__ and __RewriteRule__ directives required for __ElegantErrors__ to operate properly.
-
-+ __ErrorDocument -__ *all of these are required - they are currently Apache 2.x only*
-+ __RewriteRules -__ *anything referencing __errors__ folder*
-+ __DirectoryIndex -__ *only if your .htaccess file <u>does not</u> already have this directive*
-+ __All Other Rules -__ *<u>optional</u>: collected over time, use if desired and please comment...*
+-----------
 
 ## Requirements
 
-+ PHP 5.3+
-+ PECL YAML
-+ PEAR phpDocumentor
-+ Composer
-+ Apache 2.2.+
-+ Linux (tested on Ubuntu Trusty)
++ PHP
+  - version 5.3.x or higher
+  - [Composer](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-composer-on-ubuntu-14-04)
++ PECL
+  - [YAML](https://pecl.php.net/package/yaml)
++ PEAR
+  - [phpDocumentor](http://www.phpdoc.org/)
+  - [Mail](https://pear.php.net/package/Mail)
+  - [Mail_Mime](https://pear.php.net/package/Mail_Mime)
+  - [Net_SMTP](https://pear.php.net/package/Net_SMTP)
++ Web Servers
+  - Apache version 2.2.x or higher
+  - <i>NginX and Microsoft IIS coming soon...</i>
++ Linux
+  - tested on [Ubuntu Trusty](http://releases.ubuntu.com/14.04/)
+
+## Installation
+
+1. Checkout or download the zip to get the files into a working directory.  
+2. ```cd``` into the working directory and type ```composer update``` to update the vendor folder.
+3. Make a backup of your main ```.htaccess``` file.
+4. Copy the __ErrorDocument__ and __RewriteRule__ directives from the working directory __.htaccess__ file.
+  + The following rules are required for __ElegantErrors__ to operate properly:
+    - __ErrorDocument -__ *all of these are required - they are currently Apache 2.x only*
+    - __RewriteRules -__ *anything referencing __errors__ folder*
+    - __DirectoryIndex -__ *only if your .htaccess file <u>does not</u> already have this directive*
+    - __All Other Rules -__ *<u>optional</u>: collected over time, use if desired and please comment...*
+  <br /><span style="font-size:85%;"><i>The directives should be copied into the main root level .htaccess file.<br />Carefully inspect your file for duplicates or conflicts before uploading.</i></span><br />
+5. Upload the __/errors__ folder and your new main ```.htaccess``` file
+6. Change the write permissions to __777__
+  - __/errors/lib/Smarty/templates_c__
+  - __/errors/lib/Smarty/cache__
+
+Give it a try @ __/errors/demo__
 
 ## Removal
 
 Removal instructions are documented if required by a plugin or vendor requirement.<br />
 <span style="font-size:75%;">(*Only required if certain advanced features have been enabled in <u>config.yaml</u>, otherwise safe to delete, __see #comments__*)</span>
+
+-----------
 
 ### License
 See the GNU General Public License found in LICENSE.txt for more details.  
@@ -58,7 +79,9 @@ For the complete list of references, please visit the __/errors/credits__ page w
     + [Rewrite Flags](https://httpd.apache.org/docs/2.4/rewrite/flags.html)    
   + [Aliases & Redirects](https://httpd.apache.org/docs/2.2/mod/mod_alias.html)
 
-### @TODOs
+---------
+
+#### @TODOs
 
 Features TBD, got notes, just need time...
 

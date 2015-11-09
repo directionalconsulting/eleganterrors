@@ -22,7 +22,6 @@
 					<!--[include file="$route.tpl"]-->
 					<!--[if $status->credits eq 0]-->
 				</div>
-			<!--[include file="footer.tpl"]-->
 			<!--[else]-->
 			</div>
 			<!--[include file="footer.tpl"]-->

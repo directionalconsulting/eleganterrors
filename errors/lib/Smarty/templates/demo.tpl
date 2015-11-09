@@ -3,7 +3,11 @@
 		<h3 class="status_code"><!--[$config->package]--> Demo</h3>
 		<div style="text-align: justify;">
 		<!--[foreach from=$config->codes key=k item=v]-->
-			<p></p><a href="<!--[$base]-->/<!--[$k]-->" title="<!--[$v->response]-->"><!--[$k|string_format:'%03d']--> - <!--[$v->response]--></a></p>
+			<!--[if $k >=300 && $k <= 400]-->
+				<p></p><a href="<!--[$base]-->/<!--[$k]-->/google.com" title="<!--[$v->response]-->"><!--[$k|string_format:'%03d']--> - <!--[$v->response]--></a></p>
+			<!--[else]-->
+				<p></p><a href="<!--[$base]-->/<!--[$k]-->" title="<!--[$v->response]-->"><!--[$k|string_format:'%03d']--> - <!--[$v->response]--></a></p>
+			<!--[/if]-->
 		<!--[/foreach]-->
 		</div>
 	</div>

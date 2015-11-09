@@ -1,6 +1,7 @@
 <div class="row">
 	<div id="response">
 		<h1><!--[$config->credits->response]--></h1>
+		<p style="text-align: justify;"><!--[$config->credits->details]--></p>
 		<img src="<!--[$base]-->/assets/img/<!--[$config->credits->image]-->" alt="<!--[$config->credits->imagetext]-->" />
 	</div>
 </div>

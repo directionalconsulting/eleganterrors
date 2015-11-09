@@ -27,11 +27,13 @@ contact:
 # Please do not alter credits - project is actively maintained and supported - contact me, thx ;~}
 credits:
   link: https://github.com/directionalconsulting/eleganterrors
-  image: elegant.png
+  image: elegant.jpg
 #  reason: Because it's a mistake to excuse errors without class,
   reason: |-
     <a href="https://www.google.com/#q=a+server+error+occurred" title="Oops... a server error occurred" rel="nofollow">Oops... a server error occurred</a>,<br /><b>Not Without Class!</b>
   response: Elegant Errors
+  details: |-
+    Elegant Errors is built on technology standards with class to provide methods for handling server faults and permit average users to submit detailed error reports.
   logos:
     - title: GPL v3
       link: https://www.gnu.org/licenses/gpl-3.0-standalone.html
@@ -142,24 +144,24 @@ codes:
     image: the_hitchhikers_guide_to_the_galaxy.jpg
     retry: 7862400
   69:
-    response: What number are we thinking of...?
+    response: Be Excellent To Each Other
     reason: Surprisingly simple idea,
     image: 69.jpg
     retry: 0
 # 1xx Informational
-  100:
-    response: Continue
-    reason: |-
-      The server has received the request headers and<br />
-      the client should proceed to send the request body,
-    image: continue.png
-    retry: 0
+#  100:
+#    response: Continue
+#    reason: |-
+#      The server has received the request headers and<br />
+#      the client should proceed to send the request body,
+#    image: continue.png
+#    retry: 0
 # 2xx Success
-  200:
-    response: OK
-    reason: Standard response for successful HTTP requests, got it... OK,
-    image: ok.png
-    retry: 0;
+#  200:
+#    response: OK
+#    reason: Standard response for successful HTTP requests, got it... OK,
+#    image: ok.png
+#    retry: 0;
 # 3xx Redirection w/Redirect URL required
   307:
     response: Temporary Redirect

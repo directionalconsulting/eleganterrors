@@ -10,7 +10,7 @@
 	<div id="reason">
 		<!--[include file="url.tpl"]-->
 		<!--[$status->reason]--><br />
-		<a href="<!--[$config->routes->form]-->" class="contact" title="Contact Us">please contact us.</a>
+		<a href="<!--[$config->routes->form]-->" class="contact" title="Contact Us">Submit a report to the site administrator</a>
 		<!--[include file="package.tpl"]-->
 		<!--[include file="translate.tpl"]-->
 	</div>
