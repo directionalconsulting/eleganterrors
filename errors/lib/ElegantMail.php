@@ -367,13 +367,13 @@ class ElegantMail extends ElegantErrors {
         } else {
             //@TODO - Implement Elegance enc/dec f(x)...
             $withClass = ElegantTools::redCarpet($this->content->withClass,'decode');
-	        die(var_dump($withClass));
+//	        die(var_dump($withClass));
             $subject = $elegance->code . " - " . $elegance->status->response;
 //            $subject = "TESTING... ELEGANT ERRORS --- PLEASE STAND-BY...";
             $headers[] = array( "Subject" => $subject );
         }
 
-        die(var_dump($headers));
+//        die(var_dump($headers));
 
         // Construct MIME mail msg...
         $mime = new Mail_Mime(array('eol' => $crlf));
@@ -384,6 +384,8 @@ class ElegantMail extends ElegantErrors {
 
         $body = $mime->get(array('text_charset' => 'utf-8'));
         $headers = $mime->headers($headers);
+
+        die(var_dump($mime));
 
         // Construct SMTP mail factory and send it...
         $smtp = Mail::factory('smtp',
@@ -396,7 +398,9 @@ class ElegantMail extends ElegantErrors {
 
 //        die(var_dump($smtp));
 
+
         $mail = $smtp->send($to, $headers, $body);
+
 
 
         if (PEAR::isError($mail)) {

@@ -20,7 +20,7 @@
 				</p>
 			</fieldset>
 			<fieldset>
-					<legend>How Can We Help ?</legend>
+					<legend>What were you doing when it happened ?</legend>
 					<p>
 						<label for="message"><span class="field">Message</span>
 							<textarea id="message" name="message"><!--[$message]--></textarea>
