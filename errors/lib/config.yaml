@@ -305,44 +305,44 @@ codes:
 # @TODO - Create more images and codes, fill in this section as it works now...
   980:
     response: New Year's Day
-    reason:
-    image:
+    reason: The first day of a new year, a fresh start...
+    image: happy-new-year.jpg
     retry: 0
-  981:
-    response: Birthday of Martin Luther King, Jr.
-    reason:
-    image:
-    retry: 0
-  982:
-    response: President's Day
-    reason:
-    image:
-    retry: 0
-  983:
-    response: Memorial Day
-    reason:
-    image:
-    retry: 0
+#  981:
+#    response: Birthday of Martin Luther King, Jr.
+#    reason:
+#    image:
+#    retry: 0
+#  982:
+#    response: President's Day
+#    reason:
+#    image:
+#    retry: 0
+#  983:
+#    response: Memorial Day
+#    reason:
+#    image:
+#    retry: 0
   984:
     response: Independenace Day
-    reason:
-    image:
+    reason: Happy Birthday America
+    image: independenance-day.jpg
     retry: 0
-  985:
-    response: Labor Day
-    reason:
-    image:
-    retry: 0
-  986:
-    response: Columbus Day
-    reason:
-    image:
-    retry: 0
-  987:
-    response: Verterans Day
-    reason:
-    image:
-    retry: 0
+#  985:
+#    response: Labor Day
+#    reason:
+#    image:
+#    retry: 0
+#  986:
+#    response: Columbus Day
+#    reason:
+#    image:
+#    retry: 0
+#  987:
+#    response: Verterans Day
+#    reason:
+#    image:
+#    retry: 0
   988:
     response: Happy Thanksgiving!
     reason: It's hard to soar with the eagles, when you're surrounded by turkeys,
@@ -350,23 +350,23 @@ codes:
     retry: 3600
   989:
     response: Merry Christmas
-    reason:
-    image:
+    reason: Don't be a Grinch
+    image: merry_christmas.gif
     retry: 0
   990:
     response: Happy Valentine's
-    reason:
-    image:
+    reason: Be My Valentine
+    image: valentines_day.jpg
     retry: 0
   991:
     response: St. Patrick's Day
-    reason:
-    image:
+    reason: Luck of the Irish
+    image: st-patricks-day.png
     retry: 0
   992:
     response: Happy Halloween
-    reason:
-    image:
+    reason: Trick or Treat?
+    image: happy-halloween.png
     retry: 0
 version: 0.7.1
 release: 1447020611907

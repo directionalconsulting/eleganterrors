@@ -71,15 +71,18 @@ class ElegantErrors {
 		// Parse config.yaml and preload all status codes, etc...
 		ElegantTools::loadConfig();
 
-		// Get & Set $_SESSION variables for better error reporting...
-		//@TODO - Implement hooks for WordPress, Drupal & MVCs for ->eventTimeline() aka $_SESSION['HISTORY'] ->withClass()
-		$this->eventTimeline();
+		// Set environment variables
+		self::setStage();
 
 		// Find a route from config file...
 		ElegantViews::getRoute();
 
 		// Set the XXX code, response, image and reason for the found $this->code
-		$this->setStatus();
+		self::setStatus();
+
+		// Get & Set $_SESSION variables for better error reporting...
+		//@TODO - Implement hooks for WordPress, Drupal & MVCs for ->addHistory() aka $_SESSION['HISTORY'] ->withClass()
+		self::addHistory();
 
 		// Set the META tag info for the document
 		ElegantViews::setMeta();
@@ -180,48 +183,63 @@ class ElegantErrors {
 		return preg_match('/^[-,a-zA-Z0-9]{1,128}$/', $session_id) > 0;
 	}
 
-	public function eventTimeline() {
-		// @TODO - Add (?? PostreSQL / MySQL / InfluxDB / Mongo ??) for data tracking and health monitoring...
-
-		// Save all the posted values as XML for now...
-		// @TODO - FixMe... arrayToXML needs CDATA encapsulation
-		// $posted = $this->tools->arrayToXML($_POST);
-
+	private function setStage() {
 		$this->env->addr = $_SERVER['REMOTE_ADDR'];
 		$this->env->agent = $_SERVER['HTTP_USER_AGENT'];
 		$this->env->referrer  = $_SERVER['HTTP_REFERER'];
 		$this->env->request = $_SERVER['REQUEST_URI'];
 		$this->env->time = $_SERVER['REQUEST_TIME'];
 		$this->env->host = $_SERVER['HTTP_HOST'];
+	}
+
+	public function addHistory() {
+		// @TODO - Add (?? PostreSQL / MySQL / InfluxDB / Mongo ??) for data tracking and health monitoring...
+
+		// Save all the posted values as XML for now...
+		// @TODO - FixMe... arrayToXML needs CDATA encapsulation
+		// $posted = $this->tools->arrayToXML($_POST);
+
+		$event = array(
+			'REQUEST_TIME' => $this->env->time,
+			'HTTP_STATUS' => $this->code,
+			'HTTP_RESPONSE' => $this->status->response,
+//			'SERVER_REASON' => $this->status->reason,
+			'REQUEST_URI' => $this->env->request,
+			'HTTP_REFERER' => $this->env->referrer,
+			'HTTP_USER_AGENT' => $this->env->agent,
+			'REQUEST_TIME' => $this->env->time,
+			'REMOTE_ADDR' => $this->env->addr,
+			'HTTP_HOST' => $this->env->host
+		);
 
 		if ($this->session_valid_id(session_id()) === false) {
 			session_start();
 		}
 
-		$sid = session_id();
-		$same = session_name();
 
+		$history = array();
 		// Initialize and add to the history array of URLs visited before the crash...
 		if (isset($_SESSION['withClass']) && !empty($_SESSION['withClass'])) {
-			$payload = ElegantTools::redCarpet($_SESSION['withClass'],'decode');
-			$history = unserialize($payload['HISTORY']);
-			array_push($history,array($this->env->time, $this->env->request, $this->env->referrer));
+			$history = ElegantTools::redCarpet($_SESSION['withClass'],'decode');
+			// Don't add an event if submitting a form, use the previous event(s)...
+			if ($this->route != 'form') {
+				array_push($history,$event);
+			}
 		} else {
-			$history = array($this->env->time, $this->env->request, $this->env->referrer);
+			// Our first event for withClass session variable...
+			$history = array($event);
 		}
-		// Complete the payload and ready for the redCarpet...
-		$payload['HISTORY'] = serialize($history);
-		$payload['HTTP_STATUS']  = $this->code;
-		$payload['REMOTE_ADDR'] = $this->env->addr;
-		$payload['USER_AGENT'] = $this->env->agent;
-		$payload['REQUEST_TIME'] = $this->env->time;
-		$payload['HTTP_HOST'] = $this->env->host;
 
-		$_SESSION['withClass']  = $withClass = ElegantTools::redCarpet($payload,'encode');
-		$this->env->withClass= $withClass;
+		$this->env->history = $history;
+		$this->env->last = end($history);
 
+		$withClass = ElegantTools::redCarpet($history,'encode');
+
+		if ($this->route != 'form') {
+			$_SESSION['withClass'] = $withClass;
+		}
+		$this->env->withClass = $withClass;
 	}
-
 
 }
 

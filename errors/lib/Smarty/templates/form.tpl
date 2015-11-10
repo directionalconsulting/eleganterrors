@@ -10,14 +10,11 @@
 			<fieldset>
 				<legend for="problem">Was This The Problem ?</legend>
 				<p>
-					<label>Accept <!--[$config->package]--> report?
-						<input type="checkbox" id="yes" name="yes">
-					</label>
-				</p>
-				<p>
 					<label>Server Error
-						<textarea id="problem" name="problem">
-							<!--[$code]--> - <!--[$status->response]-->
+						<textarea id="problem" name="problem" readonly="readonly">
+							<!--[foreach from=$env->last key=t item=cell]-->
+								<!--[$t]-->: <!--[$cell]-->
+							<!--[/foreach]-->
 						</textarea>
 					</label>
 				</p>
@@ -48,27 +45,27 @@
 
 			<fieldset>
 				<legend>Prove you're not a robot !</legend>
-				<p>
-					<label for="keycode">
-						<img src="<!--[$status->captcha]-->" />
-						<input type="text" tabindex="4" name="keystring" id="keycode" placeholder="Enter Verification Code">
+				<p >
+					<label for="keycode" id="robot">
+						<img id="captcha" src="<!--[$status->captcha]-->" title="Captcha"/>
+						<input type="text" tabindex="4" name="keystring" id="keycode" placeholder="Enter Code">
 					</label>
 				</p>
 			</fieldset>
 
 			<fieldset>
 				<legend>Submit or Quit ?</legend>
-				<p>
+				<p class="inline">
 					<label for="submit">Submit
 						<input type="image" tabindex="5" name="submit" id="submit" src="<!--[$base]-->/assets/img/send.png">
 					</label>
 				</p>
-				<p>
+				<p class="inline">
 					<label for="cancel">Cancel
 						<input type="image" tabindex="6"  name="cancel" id="cancel" src="<!--[$base]-->/assets/img/error.png">
 					</label>
 				</p>
-
+				<p>Clicking submit will send this form to the site administrator</p>
 			</fieldset>
 
 			</p>

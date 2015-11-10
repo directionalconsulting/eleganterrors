@@ -124,17 +124,13 @@ class ElegantViews extends ElegantErrors {
 
 		// Make certain $smarty is initialized before we compile, if not throw error and abort!
 		if (!isset($smarty)) trigger_error('Failed to load '._SMARTY.'smarty.inc.php in '.__FUNCTION__, E_ERROR);
-/**
- *
- *
-		//@TODO - Implment LESS options for main & side columns + color alerts...
-		// Load and execute leafo/lessphp
-		require_once('lessc.inc.php');
-		$less = new lessc;
-		//@see - http://leafo.net/lessphp/docs/#setting_variables_from_php
-**/
+
 		switch ($this->route) {
 			case 'errors':
+				$mainWidth = '85%';
+				$sideWidth = '0';
+				break;
+			case 'form':
 				$mainWidth = '85%';
 				$sideWidth = '0';
 				break;
@@ -142,19 +138,26 @@ class ElegantViews extends ElegantErrors {
 				$mainWidth = '45%';
 				$sideWidth = '15%';
 		}
+
 /**
+ * @TODO - Implment LESS options for main & side columns + color alerts...
+ * @FixMe - Caching issue with LESS and column widths...
  *
- *
+		// Load and execute leafo/lessphp
+		require_once('lessc.inc.php');
+		$less = new lessc;
+		//@see - http://leafo.net/lessphp/docs/#setting_variables_from_php
 		$less->setVariables(array(
 			"mainWidth" => $mainWidth,
 			"sideWidth" => $sideWidth
 		));
 
-//		$less->compile('#maincol { width: @mainWidth }');
-//		$less->compile('#leftcol, #rightcol { width: @sideWidth }');
 		$less->compileFile('assets/css/stlyes.less', 'assets/css/custom.css');
-//		$less->cachedCompile('assets/css/stlyes.less',true);
-**/
+  		$less->cachedCompile('assets/css/stlyes.less',true);
+ *
+ *
+ */
+
 		// The clock is still running...
 		$smarty->assign('ElegantTimer', $this->timer);
 
@@ -165,6 +168,7 @@ class ElegantViews extends ElegantErrors {
 
 		// Global config and routing...
 		$smarty->assign('config',$this->config);
+		$smarty->assign('env',$this->env);
 		$smarty->assign('route',$this->route);
 
 		// Status codes and redirects...
