@@ -16,6 +16,8 @@ __>> Website maintainers <u>please change the contact email</u> in the config.ya
 
 <span style="font-size:75%;"> __PRODUCTION SERVERS:__ Generate __config.json__ prior to uploading with [PECL YAML](http://php.net/manual/en/book.yaml.php), DO NOT manually edit the file.</span>
 
+Give it a try @ [/errors/demo](http://gordonhackett.com/errors/demo)
+
 -----------
 
 ## Requirements
@@ -52,8 +54,6 @@ __>> Website maintainers <u>please change the contact email</u> in the config.ya
 6. Change the write permissions to __777__
   - __/errors/lib/Smarty/templates_c__
   - __/errors/lib/Smarty/cache__
-
-Give it a try @ __/errors/demo__
 
 ## Removal
 
