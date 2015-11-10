@@ -279,7 +279,7 @@ codes:
     image: http.png
     retry: 0
   507:
-    response: Insufficeint Space
+    response: Insufficient Space
     reason: The storage system is full,
     image: stuffed.png
     retry: 86400
@@ -324,9 +324,9 @@ codes:
 #    image:
 #    retry: 0
   984:
-    response: Independenace Day
+    response: Independence Day
     reason: Happy Birthday America
-    image: independenance-day.jpg
+    image: independence-day.jpg
     retry: 0
 #  985:
 #    response: Labor Day
