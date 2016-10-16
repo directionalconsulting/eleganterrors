@@ -15,7 +15,7 @@
 	RewriteRule ^$ /errors/msg.php?c=505 [L]
 	RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^errors/(.*?)$ /errors/msg.php [L]
+    RewriteRule ^(.*?)$ /errors/msg.php [L]
 </IfModule>
 
 ##
@@ -42,7 +42,7 @@
 
 <IfModule mod_dir.c>
 	# Default DirectoryIndex files
-	DirectoryIndex index.php index.shtml index.html
+	DirectoryIndex msg.php index.php index.shtml index.html
 	Order allow,deny
 	Allow from all
 </IfModule>
